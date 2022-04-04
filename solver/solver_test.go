@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestLiteralSat(t *testing.T) {
-	result := IsSat("x")
+	result, _ := IsSat("x")
 	if !result {
 		t.Fail()
 	}
