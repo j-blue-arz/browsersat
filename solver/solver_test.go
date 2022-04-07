@@ -8,3 +8,10 @@ func TestLiteralSat(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestFormulaUnsat(t *testing.T) {
+	result, _ := IsSat("x & ^x")
+	if result {
+		t.Fail()
+	}
+}
