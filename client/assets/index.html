@@ -9,5 +9,21 @@
             });
         </script>
     </head>
-    <body></body>
+    <body>
+        <div class="content">
+            <input id="formula" type="text"/>
+            <button id="check" name="check">Check Sat</button>
+            is satisfiable: <output id="output" for="check"></output>
+        </div>
+        <script>
+            let formula = document.getElementById("formula");
+            let checkButton = document.getElementById("check");
+            let outputDiv = document.getElementById("output");
+
+            checkButton.onclick = function (event) {
+                const result = solveFormula(formula.value);
+                outputDiv.innerHTML = result;
+            };
+        </script>
+    </body>
 </html>  

@@ -34,6 +34,6 @@ func jsonWrapper() js.Func {
 }
 
 func main() {
-	js.Global().Set("isSat", jsonWrapper())
+	js.Global().Set("solveFormula", jsonWrapper())
 	<-make(chan bool)
 }
