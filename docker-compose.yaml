@@ -4,4 +4,4 @@ services:
     ports:
       - "7111:80"
     volumes:
-      - ./client/assets:/usr/share/nginx/html:ro
+      - ./client/dist:/usr/share/nginx/html:ro
