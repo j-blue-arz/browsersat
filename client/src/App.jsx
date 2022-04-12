@@ -1,5 +1,5 @@
 import React from "react";
-import { Clauses } from "./Clauses.js";
+import { Clauses } from "./Clauses.jsx";
 
 function App(){
   return (
