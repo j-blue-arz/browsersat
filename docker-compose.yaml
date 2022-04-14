@@ -1,7 +1,5 @@
 services:
   webapp:
-    image: nginx:latest
+    build: .
     ports:
-      - "7111:80"
-    volumes:
-      - ./client/dist:/usr/share/nginx/html:ro
+      - "80:80"
