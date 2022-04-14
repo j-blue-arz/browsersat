@@ -5,7 +5,7 @@ export class ClauseInput extends React.Component {
         super(props);
 
         this.state = {
-            clauseString: "x & ^x",
+            clauseString: "",
         };
 
         this.handleOnClick = this.handleOnClick.bind(this);
