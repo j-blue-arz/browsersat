@@ -24,7 +24,7 @@ export class Clauses extends React.Component {
             result = window.solveFormula(formula);
         }
         return (
-            <div class="clauses">
+            <div className="clauses">
                 <ClauseInput onAddClause={this.handleAddClause} />
                 <ClausesDisplay clauses={this.state.clauses} />
                 <ClausesStatus isSat={result}/>
@@ -34,18 +34,17 @@ export class Clauses extends React.Component {
 }
 
 function ClausesDisplay(props) {
-    console.log("display" + props.clauses);
     const clauses = props.clauses.map((clause) => {
-        return <div class="clause">{clause}</div>;
+        return <div className="clause">{clause}</div>;
     });
-    return <div class="clauses__display">{clauses}</div>;
+    return <div className="clauses__display">{clauses}</div>;
 }
 
 function ClausesStatus(props) {
     if(props.isSat) {
-        return <div class="clauses__status clauses__status--sat">SAT</div>;
+        return <div className="clauses__status clauses__status--sat">SAT</div>;
     } else {
-        return <div class="clauses__status clauses__status--unsat">UNSAT</div>;
+        return <div className="clauses__status clauses__status--unsat">UNSAT</div>;
     }
     
 }

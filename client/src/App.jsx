@@ -3,7 +3,7 @@ import { Clauses } from "./Clauses.jsx";
 
 function App(){
   return (
-    <div class="app__content">
+    <div className="app__content">
       <Clauses />
     </div>
   );

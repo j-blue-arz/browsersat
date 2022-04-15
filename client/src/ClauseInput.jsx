@@ -22,7 +22,7 @@ export class ClauseInput extends React.Component {
 
     render() {
         return (
-            <div class="clause-input">
+            <div className="clause-input">
                 <input type="text" value={this.state.clauseString} onChange={this.handleChange} />
                 <button name="add" onClick={this.handleOnClick}>
                     Add

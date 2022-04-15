@@ -2,3 +2,5 @@
 /.vscode
 
 /dist
+/public/solver.wasm
+/public/wasm_exec.js
