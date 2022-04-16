@@ -34,8 +34,8 @@ export class Clauses extends React.Component {
 }
 
 function ClausesDisplay(props) {
-    const clauses = props.clauses.map((clause) => {
-        return <div className="clause">{clause}</div>;
+    const clauses = props.clauses.map((clause, index) => {
+        return <div className="clause" key={index}>{clause}</div>;
     });
     return <div className="clauses__display">{clauses}</div>;
 }
