@@ -7,6 +7,8 @@ export class Clauses extends React.Component {
 
         this.state = {
             clauses: [],
+            model: {},
+            satisfiable: false
         };
         this.handleAddClause = this.handleAddClause.bind(this);
     }
@@ -15,19 +17,21 @@ export class Clauses extends React.Component {
         const clauses = this.state.clauses.slice();
         clauses.push(clause);
         this.setState({clauses: clauses});
+
+        if(window.solveFormula) {
+            const formula = clauses.join(";");
+            const solution = window.solveFormula(formula);
+            const satisfiable = solution["sat"];
+            this.setState({satisfiable: satisfiable});
+        }
     }
 
     render() {
-        const formula = this.state.clauses.join(";");
-        let result = false;
-        if(window.solveFormula) {
-            result = window.solveFormula(formula);
-        }
         return (
             <div className="clauses">
                 <ClauseInput onAddClause={this.handleAddClause} />
                 <ClausesDisplay clauses={this.state.clauses} />
-                <ClausesStatus isSat={result}/>
+                <ClausesStatus isSat={this.state.satisfiable}/>
             </div>
         );
     }
