@@ -1,10 +1,10 @@
 import React from "react";
-import { Clauses } from "./Clauses.jsx";
+import { Constraints } from "./Constraints.jsx";
 
 function App(){
   return (
     <div className="app__content">
-      <Clauses />
+      <Constraints />
     </div>
   );
 }

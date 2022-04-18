@@ -1,11 +1,11 @@
 import React from "react";
 
-export class ClauseInput extends React.Component {
+export class ConstraintInput extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            clauseString: "",
+            inputString: "",
         };
 
         this.handleOnClick = this.handleOnClick.bind(this);
@@ -13,17 +13,17 @@ export class ClauseInput extends React.Component {
     }
 
     handleOnClick(event) {
-        this.props.onAddClause(this.state.clauseString);
+        this.props.onAddConstraint(this.state.inputString);
     }
 
     handleChange(event) {
-        this.setState({ clauseString: event.target.value });
+        this.setState({ inputString: event.target.value });
     }
 
     render() {
         return (
-            <div className="clause-input">
-                <input type="text" value={this.state.clauseString} onChange={this.handleChange} />
+            <div className="constraint-input">
+                <input type="text" value={this.state.inputString} onChange={this.handleChange} />
                 <button name="add" onClick={this.handleOnClick}>
                     Add
                 </button>
