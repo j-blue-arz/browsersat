@@ -1,5 +1,6 @@
 import React from "react";
 import { ConstraintInput } from "./ConstraintInput";
+import { ConstraintsDisplay } from "./ConstraintsDisplay";
 
 export class Constraints extends React.Component {
     constructor(props) {
@@ -23,6 +24,9 @@ export class Constraints extends React.Component {
             const solution = window.solveFormula(formula);
             const satisfiable = solution["sat"];
             this.setState({satisfiable: satisfiable});
+            if(satisfiable) {
+                this.setState({model: solution["model"]})
+            }
         }
     }
 
@@ -30,19 +34,13 @@ export class Constraints extends React.Component {
         return (
             <div className="constraints">
                 <ConstraintInput onAddConstraint={this.handleAddConstraint} />
-                <ConstraintsDisplay constraints={this.state.constraints} />
+                <ConstraintsDisplay constraints={this.state.constraints} model={this.state.model} />
                 <SatStatus isSat={this.state.satisfiable}/>
             </div>
         );
     }
 }
 
-function ConstraintsDisplay(props) {
-    const constraints = props.constraints.map((constraint, index) => {
-        return <div className="constraint" key={index}>{constraint}</div>;
-    });
-    return <div className="constraints__display">{constraints}</div>;
-}
 
 function SatStatus(props) {
     if(props.isSat) {
