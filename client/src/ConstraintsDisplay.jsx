@@ -7,7 +7,7 @@ export class ConstraintsDisplay extends React.Component {
             const tokens = constraint.split(/([a-zA-Z0-9_]+)/);
             const display = tokens.filter(token => token.length > 0).map((token, index) => {
                 if (token in this.props.model) {
-                    return <Literal token={token} key={token} />
+                    return <Literal token={token} key={token} value={this.props.model[token]} />
                 } else {
                     return <React.Fragment key={index}>{token}</React.Fragment>
                 }
@@ -24,7 +24,13 @@ export class ConstraintsDisplay extends React.Component {
 }
 
 function Literal(props) {
-    return <span>{props.token}</span>
+    let valueClass = "";
+    if(props.value === true) {
+        valueClass = "literal--true";
+    } else if(props.value === false) {
+        valueClass = "literal--false";
+    }
+    return <span className={`literal ${valueClass}`}>{props.token}</span>
 }
 
 ConstraintsDisplay.defaultProps = {
