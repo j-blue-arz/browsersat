@@ -1,0 +1,13 @@
+.constraint {
+    font-family: Courier
+}
+
+.literal--false {
+    color: #ff4b4b;
+    font-weight: 200
+}
+
+.literal--true {
+    color: #004200;
+    font-weight: 700;
+}

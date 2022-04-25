@@ -2,6 +2,8 @@ import React from "react";
 import { ConstraintInput } from "./ConstraintInput";
 import { ConstraintsDisplay } from "./ConstraintsDisplay";
 
+import "./Constraints.css";
+
 export class Constraints extends React.Component {
     constructor(props) {
         super(props);

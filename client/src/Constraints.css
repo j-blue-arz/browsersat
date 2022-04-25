@@ -1,0 +1,11 @@
+.constraints {
+    width: 50%;
+    height: 50%;
+
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.constraints__display {
+    flex-grow: 2;
+}

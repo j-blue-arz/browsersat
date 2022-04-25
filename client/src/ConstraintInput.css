@@ -1,0 +1,23 @@
+.constraint-input__button {
+  background-color: #FAFBFC;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: #24292E;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 20px;
+  padding: 5px 16px;
+  margin-left: 5px;
+}
+
+.constraint-input__button:hover {
+  background-color: #F3F4F6;
+}
+
+.constraint-input__button:active {
+  background-color: #EDEFF2;
+}
+
+.constraint-input__text {
+    line-height: 20px;
+}

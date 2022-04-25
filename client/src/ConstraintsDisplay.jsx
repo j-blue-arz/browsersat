@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./ConstraintsDisplay.css";
+
 export class ConstraintsDisplay extends React.Component {
     render() {
 

@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./ConstraintInput.css";
+
 export class ConstraintInput extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +26,7 @@ export class ConstraintInput extends React.Component {
         return (
             <div className="constraint-input">
                 <input type="text" value={this.state.inputString} onChange={this.handleChange} />
-                <button name="add" onClick={this.handleOnClick}>
+                <button type="submit" name="add" className="constraint-input__button" onClick={this.handleOnClick}>
                     Add
                 </button>
             </div>
