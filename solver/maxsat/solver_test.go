@@ -60,8 +60,8 @@ func assertUnsat(t *testing.T) {
 
 func assertTrue(literal string, t *testing.T) {
 	result, _ := GetModel()
-	val, ok := result[literal].(bool)
-	if !ok || !val {
+	val := result[literal]
+	if !val {
 		t.Fail()
 	}
 }

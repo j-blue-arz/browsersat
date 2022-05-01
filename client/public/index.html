@@ -11,6 +11,7 @@
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("%PUBLIC_URL%/solver.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
+            window.satsolver.initializeSolver();
         });
     </script>
   </head>

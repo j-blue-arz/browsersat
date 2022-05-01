@@ -11,23 +11,24 @@ export class Constraints extends React.Component {
         this.state = {
             constraints: [],
             model: {},
-            satisfiable: false
+            satisfiable: false,
         };
         this.handleAddConstraint = this.handleAddConstraint.bind(this);
     }
 
     handleAddConstraint(constraint) {
-        const constraints = this.state.constraints.slice();
-        constraints.push(constraint);
-        this.setState({constraints: constraints});
+        if (window.satsolver) {
+            window.satsolver.addConstraint(constraint);
 
-        if(window.solveFormula) {
-            const formula = constraints.join(";");
-            const solution = window.solveFormula(formula);
-            const satisfiable = solution["sat"];
-            this.setState({satisfiable: satisfiable});
-            if(satisfiable) {
-                this.setState({model: solution["model"]})
+            const constraints = this.state.constraints.slice();
+            constraints.push(constraint);
+            this.setState({ constraints: constraints });
+
+            const satisfiable = window.satsolver.isSat()
+            this.setState({ satisfiable: satisfiable });
+            if (satisfiable) {
+                const model = window.satsolver.getModel();
+                this.setState({ model: model });
             }
         }
     }
@@ -37,18 +38,16 @@ export class Constraints extends React.Component {
             <div className="constraints">
                 <ConstraintInput onAddConstraint={this.handleAddConstraint} />
                 <ConstraintsDisplay constraints={this.state.constraints} model={this.state.model} />
-                <SatStatus isSat={this.state.satisfiable}/>
+                <SatStatus isSat={this.state.satisfiable} />
             </div>
         );
     }
 }
 
-
 function SatStatus(props) {
-    if(props.isSat) {
+    if (props.isSat) {
         return <div className="constraints__status constraints__status--sat">SAT</div>;
     } else {
         return <div className="constraints__status constraints__status--unsat">UNSAT</div>;
     }
-    
 }
