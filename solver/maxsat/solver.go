@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/crillab/gophersat/bf"
+	"github.com/crillab/gophersat/solver"
 )
 
 var inputConstraints []string
@@ -41,8 +41,8 @@ func GetModel() (map[string]bool, error) {
 
 }
 
-func updateModel(formula bf.Formula) {
-	model = bf.Solve(formula)
+func updateModel(formula Formula) {
+	model = solve(formula)
 
 	if model != nil {
 		isSat = true
@@ -51,8 +51,23 @@ func updateModel(formula bf.Formula) {
 	}
 }
 
-func parse(input []string) (bf.Formula, error) {
+func solve(formula Formula) map[string]bool {
+	cnf := AsCnf(formula)
+	pb := solver.ParseSlice(cnf.clauses)
+	s := solver.New(pb)
+	if s.Solve() != solver.Sat {
+		return nil
+	}
+	m := s.Model()
+	vars := make(map[string]bool)
+	for v, idx := range cnf.vars.pb {
+		vars[v.name] = m[idx-1]
+	}
+	return vars
+}
+
+func parse(input []string) (Formula, error) {
 	constraints := strings.Join(input, "; ")
 	reader := strings.NewReader(constraints)
-	return bf.Parse(reader)
+	return Parse(reader)
 }
