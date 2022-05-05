@@ -1,6 +1,9 @@
 package maxsat
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestLiteralSat(t *testing.T) {
 	Init()
@@ -44,6 +47,17 @@ func TestInit(t *testing.T) {
 	assertSat(t)
 }
 
+func TestFlipLiteral(t *testing.T) {
+	Init()
+	AddConstraint("a | b | c")
+	model, _ := GetModel()
+	FlipLiteral("b")
+	newModel, _ := GetModel()
+	if model["b"] == newModel["b"] {
+		t.Errorf("FlipLiteral should flip model[\"b\"], but remained %t", model["b"])
+	}
+}
+
 func assertSat(t *testing.T) {
 	sat := IsSat()
 	if !sat {
@@ -62,6 +76,12 @@ func assertTrue(literal string, t *testing.T) {
 	result, _ := GetModel()
 	val := result[literal]
 	if !val {
+		t.Fail()
+	}
+}
+
+func assertEq(a, b int, t *testing.T) {
+	if a != b {
 		t.Fail()
 	}
 }

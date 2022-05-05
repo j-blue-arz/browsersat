@@ -295,6 +295,20 @@ func (p *parser) parseClause() (f Formula, err error) {
 	return f, nil
 }
 
+func (cnf *Cnf) TransformModel(model []bool) map[string]bool {
+	vars := make(map[string]bool)
+	for v, idx := range cnf.vars.pb {
+		vars[v.name] = model[idx-1]
+	}
+	return vars
+}
+
+// Only supports Var("x") and Not(Var("x")), and only if "x" is known in vars
+func (cnf *Cnf) AddUnitLiteral(f Formula) {
+	clauses := cnfRec(f.nnf(), &cnf.vars)
+	cnf.clauses = append(cnf.clauses, clauses...)
+}
+
 func (p *parser) parseEquiv() (f Formula, err error) {
 	if p.eof {
 		return nil, fmt.Errorf("at position %v, expected expression, found EOF", p.s.Pos())

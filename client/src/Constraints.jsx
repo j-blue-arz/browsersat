@@ -14,6 +14,7 @@ export class Constraints extends React.Component {
             satisfiable: false,
         };
         this.handleAddConstraint = this.handleAddConstraint.bind(this);
+        this.handleFlipLiteral = this.handleFlipLiteral.bind(this);
     }
 
     handleAddConstraint(constraint) {
@@ -33,11 +34,21 @@ export class Constraints extends React.Component {
         }
     }
 
+    handleFlipLiteral(literal) {
+        if (window.satsolver) {
+            const possible = window.satsolver.flipLiteral(literal);
+            if(possible) {
+                const model = window.satsolver.getModel();
+                this.setState({ model: model });
+            }
+        }
+    }
+
     render() {
         return (
             <div className="constraints">
                 <ConstraintInput onAddConstraint={this.handleAddConstraint} />
-                <ConstraintsDisplay constraints={this.state.constraints} model={this.state.model} />
+                <ConstraintsDisplay constraints={this.state.constraints} model={this.state.model} onFlipLiteral={this.handleFlipLiteral} />
                 <SatStatus isSat={this.state.satisfiable} />
             </div>
         );

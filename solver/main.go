@@ -36,6 +36,14 @@ func getModel(this js.Value, args []js.Value) interface{} {
 	return convertModel(model)
 }
 
+func flipLiteral(this js.Value, args []js.Value) interface{} {
+	error := maxsat.FlipLiteral(args[0].String())
+	if error != nil {
+		return false
+	}
+	return true
+}
+
 func convertModel(model map[string]bool) map[string]interface{} {
 	result := make(map[string]interface{})
 	for lit, value := range model {
@@ -50,6 +58,7 @@ func main() {
 	export["addConstraint"] = js.FuncOf(addConstraint)
 	export["isSat"] = js.FuncOf(isSat)
 	export["getModel"] = js.FuncOf(getModel)
+	export["flipLiteral"] = js.FuncOf(flipLiteral)
 	js.Global().Set("satsolver", export)
 
 	<-make(chan bool)

@@ -24,7 +24,30 @@ func AddConstraint(inputConstraint string) error {
 		return fmt.Errorf("could not parse constraint %q: %v", inputConstraint, err)
 	}
 	inputConstraints = newConstraints
-	updateModel(formula)
+	cnf := AsCnf(formula)
+	updateModel(cnf)
+	return nil
+}
+
+func FlipLiteral(literal string) error {
+	if !isSat {
+		return fmt.Errorf("constraints are not satisfiable")
+	}
+	if _, ok := model[literal]; !ok {
+		return fmt.Errorf("literal %q not contained in model", literal)
+	}
+	formula, _ := parse(inputConstraints)
+	cnf := AsCnf(formula)
+	if model[literal] {
+		cnf.AddUnitLiteral(Not(Var(literal)))
+	} else {
+		cnf.AddUnitLiteral(Var(literal))
+	}
+	newModel := solve(cnf)
+	if newModel == nil {
+		return fmt.Errorf("flipping %q leads to UNSAT", literal)
+	}
+	model = newModel
 	return nil
 }
 
@@ -38,11 +61,10 @@ func GetModel() (map[string]bool, error) {
 	} else {
 		return nil, fmt.Errorf("no model for UNSAT constraints")
 	}
-
 }
 
-func updateModel(formula Formula) {
-	model = solve(formula)
+func updateModel(cnf *Cnf) {
+	model = solve(cnf)
 
 	if model != nil {
 		isSat = true
@@ -51,19 +73,22 @@ func updateModel(formula Formula) {
 	}
 }
 
-func solve(formula Formula) map[string]bool {
-	cnf := AsCnf(formula)
+func solve(cnf *Cnf) map[string]bool {
+	model := solveMaxsat(cnf)
+	if model == nil {
+		return nil
+	}
+	return cnf.TransformModel(model)
+}
+
+func solveMaxsat(cnf *Cnf) []bool {
 	pb := solver.ParseSlice(cnf.clauses)
 	s := solver.New(pb)
 	if s.Solve() != solver.Sat {
 		return nil
 	}
 	m := s.Model()
-	vars := make(map[string]bool)
-	for v, idx := range cnf.vars.pb {
-		vars[v.name] = m[idx-1]
-	}
-	return vars
+	return m
 }
 
 func parse(input []string) (Formula, error) {
