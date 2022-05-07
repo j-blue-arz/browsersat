@@ -1,4 +1,5 @@
 import React from "react";
+import "./Literal.css";
 
 export class Literal extends React.Component {
     render() {

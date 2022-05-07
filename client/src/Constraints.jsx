@@ -19,6 +19,7 @@ export class Constraints extends React.Component {
 
     handleAddConstraint(constraint) {
         if (window.satsolver) {
+            constraint = constraint.replaceAll(" ", "");
             window.satsolver.addConstraint(constraint);
 
             const constraints = this.state.constraints.slice();

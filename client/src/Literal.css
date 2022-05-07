@@ -1,5 +1,7 @@
-.constraint {
-    user-select: none;
+.literal {
+    padding: .3em;
+    display: inline-block;
+    cursor: pointer;
 }
 
 .literal--false {
