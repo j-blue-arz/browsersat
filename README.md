@@ -15,7 +15,7 @@ See [Gophersat documentation](https://pkg.go.dev/github.com/crillab/gophersat@v1
 - [x] User can compute SAT
 - [x] Docker build
 - [x] Display SAT assignment
-- [ ] User can flip literals
+- [x] User can flip literals
 - [ ] reduce binary size with TinyGo
 - [ ] Ship it
 
