@@ -189,8 +189,9 @@ func (vars *vars) dummy() int {
 }
 
 type Cnf struct {
-	vars    vars
-	clauses [][]int
+	vars      vars
+	clauses   [][]int
+	relaxLits []int
 }
 
 // asCnf returns a CNF representation of the given formula.
@@ -304,9 +305,18 @@ func (cnf *Cnf) TransformModel(model []bool) map[string]bool {
 }
 
 // Only supports Var("x") and Not(Var("x")), and only if "x" is known in vars
+// TODO: make this enforced at compile time (introduce type Literal)
 func (cnf *Cnf) AddUnitLiteral(f Formula) {
-	clauses := cnfRec(f.nnf(), &cnf.vars)
-	cnf.clauses = append(cnf.clauses, clauses...)
+	clause := cnfRec(f.nnf(), &cnf.vars)[0]
+	cnf.clauses = append(cnf.clauses, clause)
+}
+
+func (cnf *Cnf) AddRelaxableLiteral(f Formula) {
+	clause := cnfRec(f.nnf(), &cnf.vars)[0]
+	relaxLit := cnf.vars.dummy()
+	clause = append(clause, relaxLit)
+	cnf.clauses = append(cnf.clauses, clause)
+	cnf.relaxLits = append(cnf.relaxLits, relaxLit)
 }
 
 func (p *parser) parseEquiv() (f Formula, err error) {

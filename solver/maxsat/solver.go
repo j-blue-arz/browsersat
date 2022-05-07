@@ -25,7 +25,15 @@ func AddConstraint(inputConstraint string) error {
 	}
 	inputConstraints = newConstraints
 	cnf := AsCnf(formula)
-	updateModel(cnf)
+	newModel, err := solve(cnf)
+
+	if err != nil {
+		isSat = false
+		model = make(map[string]bool)
+	} else {
+		isSat = true
+		model = newModel
+	}
 	return nil
 }
 
@@ -38,17 +46,21 @@ func FlipLiteral(literal string) error {
 	}
 	formula, _ := parse(inputConstraints)
 	cnf := AsCnf(formula)
-	if model[literal] {
-		cnf.AddUnitLiteral(Not(Var(literal)))
-	} else {
-		cnf.AddUnitLiteral(Var(literal))
-	}
-	newModel := solve(cnf)
-	if newModel == nil {
+	cnf.AddUnitLiteral(toFormula(literal, !model[literal]))
+	newModel, err := solve(cnf)
+	if err != nil {
 		return fmt.Errorf("flipping %q leads to UNSAT", literal)
 	}
 	model = newModel
 	return nil
+}
+
+func toFormula(literal string, value bool) Formula {
+	if value {
+		return Var(literal)
+	} else {
+		return Not(Var(literal))
+	}
 }
 
 func IsSat() bool {
@@ -63,27 +75,32 @@ func GetModel() (map[string]bool, error) {
 	}
 }
 
-func updateModel(cnf *Cnf) {
-	model = solve(cnf)
-
-	if model != nil {
-		isSat = true
-	} else {
-		isSat = false
+func solve(cnf *Cnf) (map[string]bool, error) {
+	newModel := solveMaxsat(cnf)
+	if newModel == nil {
+		return nil, fmt.Errorf("no model for UNSAT constraints")
 	}
-}
-
-func solve(cnf *Cnf) map[string]bool {
-	model := solveMaxsat(cnf)
-	if model == nil {
-		return nil
-	}
-	return cnf.TransformModel(model)
+	return cnf.TransformModel(newModel), nil
 }
 
 func solveMaxsat(cnf *Cnf) []bool {
-	pb := solver.ParseSlice(cnf.clauses)
-	s := solver.New(pb)
+	for literal, value := range model {
+		literalFormula := toFormula(literal, value)
+		cnf.AddRelaxableLiteral(literalFormula)
+	}
+	weights := make([]int, len(cnf.relaxLits))
+	relaxLits := make([]solver.Lit, len(cnf.relaxLits))
+
+	for i, lit := range cnf.relaxLits {
+		weights[i] = 1
+		relaxLits[i] = solver.IntToLit(int32(lit))
+	}
+
+	problem := solver.ParseSlice(cnf.clauses)
+	if len(cnf.relaxLits) > 0 {
+		problem.SetCostFunc(relaxLits, weights)
+	}
+	s := solver.New(problem)
 	if s.Solve() != solver.Sat {
 		return nil
 	}

@@ -1,6 +1,7 @@
 package maxsat
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 )
@@ -58,17 +59,62 @@ func TestFlipLiteral(t *testing.T) {
 	}
 }
 
+func TestFlipLiteralMinimizesModelChanges(t *testing.T) {
+	Init()
+	AddConstraint("a | b | c")
+	model, _ := GetModel()
+	literalToFlip := "a"
+	if !allTrue(model) {
+		literalToFlip, _ = getAnyFalse(model)
+	}
+	FlipLiteral(literalToFlip)
+	newModel, _ := GetModel()
+
+	d := diff(model, newModel)
+	if d > 1 {
+		t.Errorf("when flipping %s, models %s and %s should only differ in one literal, but was %d", literalToFlip, toStr(model), toStr(newModel), d)
+	}
+}
+
+func diff(model1, model2 map[string]bool) int {
+	sum := 0
+	for lit := range model1 {
+		if model1[lit] != model2[lit] {
+			sum += 1
+		}
+	}
+	return sum
+}
+
+func getAnyFalse(model map[string]bool) (string, error) {
+	for lit, v := range model {
+		if !v {
+			return lit, nil
+		}
+	}
+	return "", fmt.Errorf("all values are true")
+}
+
+func allTrue(model map[string]bool) bool {
+	for _, v := range model {
+		if !v {
+			return false
+		}
+	}
+	return true
+}
+
 func assertSat(t *testing.T) {
 	sat := IsSat()
 	if !sat {
-		t.Fail()
+		t.Errorf("expected SAT, but was UNSAT")
 	}
 }
 
 func assertUnsat(t *testing.T) {
 	sat := IsSat()
 	if sat {
-		t.Fail()
+		t.Errorf("expected UNSAT, but was SAT")
 	}
 }
 
@@ -76,12 +122,16 @@ func assertTrue(literal string, t *testing.T) {
 	result, _ := GetModel()
 	val := result[literal]
 	if !val {
-		t.Fail()
+		t.Errorf("expected %q to be true, but was %t", literal, val)
 	}
 }
 
-func assertEq(a, b int, t *testing.T) {
-	if a != b {
-		t.Fail()
+func toStr(model map[string]bool) string {
+	mJson, err := json.Marshal(model)
+	if err != nil {
+		fmt.Println(err.Error())
+		return ""
 	}
+
+	return string(mJson)
 }
