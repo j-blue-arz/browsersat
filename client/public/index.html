@@ -9,10 +9,10 @@
     <script src="%PUBLIC_URL%/wasm_exec.js"></script>
     <script>
         const go = new Go();
-        WebAssembly.instantiateStreaming(fetch("%PUBLIC_URL%/solver.wasm"), go.importObject).then((result) => {
+        WebAssembly.instantiateStreaming(fetch("%PUBLIC_URL%/solver.wasm"), go.importObject).then(result => {
             go.run(result.instance);
-            window.satsolver.initializeSolver();
-        });
+            window.satsolver = result.instance.exports;
+        })
     </script>
   </head>
   <body>

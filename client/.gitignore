@@ -2,5 +2,6 @@
 /.vscode
 
 /dist
-/public/solver.wasm
+/public/*.wasm
 /public/wasm_exec.js
+/public/wasm_exec_golang.js
