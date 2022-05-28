@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine as solver-base
+FROM tinygo/tinygo:0.23.0 as solver-base
 
 WORKDIR /go_app
 
@@ -7,17 +7,17 @@ COPY solver/go.sum ./
 
 RUN go mod download
 
-COPY solver/main.go ./
-COPY solver/sat ./sat
+COPY solver/wasm ./wasm
+COPY solver/maxsat ./maxsat
 
 FROM solver-base as solver-test
 
-RUN go test github.com/j-blue-arz/browsersat/solver/sat
+RUN go test github.com/j-blue-arz/browsersat/solver/maxsat
 
 FROM solver-base as solver-build
 
-RUN GOOS=js GOARCH=wasm go build -o solver.wasm
-RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
+RUN tinygo build -o solver.wasm -target wasm wasm/main.go
+RUN cp "$(tinygo env TINYGOROOT)/targets/wasm_exec.js" .
 
 FROM node:16 as react-build
 

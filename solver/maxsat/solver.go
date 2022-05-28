@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/crillab/gophersat/solver"
+	"github.com/j-blue-arz/tiny-gophersat/solver"
 )
 
 var inputConstraints []string
