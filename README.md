@@ -16,13 +16,13 @@ See [Gophersat documentation](https://pkg.go.dev/github.com/crillab/gophersat@v1
 - [x] Docker build
 - [x] Display SAT assignment
 - [x] User can flip literals
-- [ ] reduce binary size with TinyGo
+- [x] reduce binary size with TinyGo
 - [ ] Ship it
 
 ### Other ideas
 * Validate input
-* Support pseudo-boolean logic 
+* Support pseudo-boolean logic
 * SVG display to increase readability
-* Show evaluation of subformulas 
+* Show evaluation of subformulas
 * Create UI for a specific use-case, e.g. some planning, scheduling or data science problem - or just simply Sudoku.
 * ...
