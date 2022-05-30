@@ -8,7 +8,7 @@ export class ConstraintInput extends React.Component {
         super(props);
 
         this.state = {
-            inputString: "",
+            inputString: "a->(b|c)",
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);

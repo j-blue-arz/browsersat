@@ -9,3 +9,9 @@
 .constraints__display {
     flex-grow: 2;
 }
+
+.constraints__interaction {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 5rem;
+}

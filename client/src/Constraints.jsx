@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "./Button";
 import { ConstraintInput } from "./ConstraintInput";
 import { ConstraintsDisplay } from "./ConstraintsDisplay";
 
@@ -11,10 +12,11 @@ export class Constraints extends React.Component {
         this.state = {
             constraints: [],
             model: {},
-            satisfiable: false,
+            satisfiable: true,
         };
         this.handleAddConstraint = this.handleAddConstraint.bind(this);
         this.handleFlipLiteral = this.handleFlipLiteral.bind(this);
+        this.handleClearConstraints = this.handleClearConstraints.bind(this);
     }
 
     handleAddConstraint(constraint) {
@@ -35,6 +37,13 @@ export class Constraints extends React.Component {
         }
     }
 
+    handleClearConstraints() {
+        this.setState({constraints: [], model: {}, satisfiable: true});
+        if (window.satsolver) {
+            window.satsolver.initializeSolver();
+        }
+    }
+
     handleFlipLiteral(literal) {
         if (window.satsolver) {
             const possible = window.satsolver.flipLiteral(literal);
@@ -48,7 +57,10 @@ export class Constraints extends React.Component {
     render() {
         return (
             <div className="constraints">
-                <ConstraintInput onAddConstraint={this.handleAddConstraint} />
+                <div className="constraints__interaction">
+                    <ConstraintInput onAddConstraint={this.handleAddConstraint} />
+                    <Button label="Clear" onClick={this.handleClearConstraints}/>
+                </div>
                 <ConstraintsDisplay constraints={this.state.constraints} model={this.state.model} onFlipLiteral={this.handleFlipLiteral} />
                 <SatStatus isSat={this.state.satisfiable} />
             </div>
