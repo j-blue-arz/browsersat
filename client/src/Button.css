@@ -1,0 +1,18 @@
+.button-white {
+    background-color: #fafbfc;
+    border: 1px solid black;
+    border-radius: 5px;
+    color: #24292e;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 1.1;
+    padding: 0.3rem 1rem;
+}
+
+.button-white:hover {
+    background-color: #f3f4f6;
+}
+
+.button-white:active {
+    background-color: #edeff2;
+}

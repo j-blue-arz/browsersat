@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "./Button.jsx";
 
 import "./ConstraintInput.css";
 
@@ -20,13 +21,13 @@ export class ConstraintInput extends React.Component {
     }
 
     handleKeyDown(event) {
-        if(event.key === "Enter") {
+        if (event.key === "Enter") {
             this.handleSubmit();
         }
     }
 
     handleSubmit(event) {
-        if(this.state.inputString.trim !== "") {
+        if (this.state.inputString.trim !== "") {
             this.props.onAddConstraint(this.state.inputString);
         }
     }
@@ -34,10 +35,14 @@ export class ConstraintInput extends React.Component {
     render() {
         return (
             <div className="constraint-input">
-                <input type="text" value={this.state.inputString} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
-                <button type="submit" name="add" className="constraint-input__button" onClick={this.handleSubmit}>
-                    Add
-                </button>
+                <input
+                    type="text"
+                    className="constraint-input__text"
+                    value={this.state.inputString}
+                    onChange={this.handleChange}
+                    onKeyDown={this.handleKeyDown}
+                />
+                <Button label="Add" onClick={this.handleSubmit} />
             </div>
         );
     }
