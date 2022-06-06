@@ -22,7 +22,8 @@ body {
     overflow: hidden;
 }
 
-input, button {
+input,
+button {
     font-family: inherit;
     font-size: inherit;
 }
@@ -31,10 +32,20 @@ input, button {
     height: 100%;
 }
 
-.app__content {
+.app__wrapper {
     height: 100%;
+    display: grid;
+    grid-template-areas: ". . content . .";
+    grid-template-columns: 1vw 1fr minmax(auto, 1400px) 1fr 1vw;
+}
+
+.app__content {
+    grid-area: content;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
+}
+
+.information {
 }
