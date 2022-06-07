@@ -7,9 +7,6 @@ Solving SAT in the browser.
 
 Open `localhost` in your browser.
 
-See [Gophersat documentation](https://pkg.go.dev/github.com/crillab/gophersat@v1.3.1/bf#Parse) for syntax of clauses.
-
-
 ## Roadmap
 - [x] User can add clauses
 - [x] User can compute SAT

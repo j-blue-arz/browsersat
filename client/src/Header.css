@@ -1,0 +1,11 @@
+.header {
+    width: 100%;
+}
+
+.header__menu {
+    font-weight: 700;
+}
+
+.header__projectname {
+    font-weight: 700;
+}
