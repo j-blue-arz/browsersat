@@ -1,6 +1,7 @@
 .constraints {
     width: 100%;
     height: 50%;
+    grid-area: constraints;
 
     display: flex;
     flex-flow: column nowrap;

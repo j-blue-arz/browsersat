@@ -35,11 +35,13 @@ export class Header extends React.Component {
 function LongInfo(props) {
     return (
         <div className="header__information">
-            {" "}
+            <p className="header__menu">
+                Browsersat | <span onClick={props.onHideInfo}>hide</span>
+            </p>
             <p>
                 <span className="header__projectname">Browsersat</span> is an{" "}
                 <a href="https://github.com/j-blue-arz/browsersat">open-source</a> client-side
-                SAT-Solver. | <span className="header__menu" onClick={props.onHideInfo}>hide</span>
+                SAT-Solver.
             </p>
             <p>
                 Enter boolean formula(s). A satisfiable assignment will show the literals as{" "}

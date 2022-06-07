@@ -41,9 +41,12 @@ button {
 
 .app__content {
     grid-area: content;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vh;
+    display: grid;
+    grid-template-areas: 
+        "."
+        "header"
+        "."
+        "constraints"
+        ".";
+    grid-template-rows: 1vh minmax(8rem, auto) 1vh 1fr 1vh;
 }
