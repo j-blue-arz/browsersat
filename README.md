@@ -15,7 +15,7 @@ Open `localhost` in your browser.
 - [x] User can flip literals
 - [x] reduce binary size with TinyGo
 - [x] Ship it
-- [ ] Continous delivery 
+- [ ] Continuous delivery 
 
 ### Other ideas
 * Validate input
