@@ -1,6 +1,6 @@
-Solving SAT in the browser.
+# Browsersat
 
-[Gophersat](https://github.com/crillab/gophersat) compiled to WebAssembly, with a React client.
+Solving SAT in the browser. Try it [here](https://browsersat.com).
 
 ## Run
     docker-compose up
@@ -14,7 +14,8 @@ Open `localhost` in your browser.
 - [x] Display SAT assignment
 - [x] User can flip literals
 - [x] reduce binary size with TinyGo
-- [ ] Ship it
+- [x] Ship it
+- [ ] Continous delivery 
 
 ### Other ideas
 * Validate input
