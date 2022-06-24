@@ -44,7 +44,7 @@ function LongInfo(props) {
                 SAT-Solver.
             </p>
             <p>
-                Enter boolean formula(s). A satisfiable assignment will show the literals as{" "}
+                Enter boolean constraint(s). A satisfiable assignment will show the literals as{" "}
                 <span className="literal--true">true</span> or{" "}
                 <span className="literal--false">false</span>.{" "}
             </p>

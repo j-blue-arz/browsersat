@@ -35,7 +35,9 @@ export class ConstraintInput extends React.Component {
     render() {
         return (
             <div className="constraint-input">
+                <label for="constraint-input">Enter constraint:</label>
                 <input
+                    id="constraint-input"
                     type="text"
                     className="constraint-input__text"
                     value={this.state.inputString}
