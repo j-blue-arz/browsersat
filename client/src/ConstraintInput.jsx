@@ -35,15 +35,16 @@ export class ConstraintInput extends React.Component {
     render() {
         return (
             <div className="constraint-input">
-                <label for="constraint-input">Enter constraint:</label>
-                <input
-                    id="constraint-input"
-                    type="text"
-                    className="constraint-input__text"
-                    value={this.state.inputString}
-                    onChange={this.handleChange}
-                    onKeyDown={this.handleKeyDown}
-                />
+                <label className="constraint-input__label">
+                    Enter constraint:
+                    <input
+                        type="text"
+                        className="constraint-input__field"
+                        value={this.state.inputString}
+                        onChange={this.handleChange}
+                        onKeyDown={this.handleKeyDown}
+                    />
+                </label>
                 <Button label="Add" onClick={this.handleSubmit} />
             </div>
         );
