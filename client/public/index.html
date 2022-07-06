@@ -9,6 +9,7 @@
     <script src="%PUBLIC_URL%/wasm_exec.js"></script>
     <script>
         const go = new Go();
+        go.importObject.env["syscall/js.finalizeRef"] = () => {}
         WebAssembly.instantiateStreaming(fetch("%PUBLIC_URL%/solver.wasm"), go.importObject).then(obj => {
             go.run(obj.instance);
             window.satsolver.initializeSolver();

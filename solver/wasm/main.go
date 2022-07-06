@@ -17,7 +17,6 @@ func addConstraint(this js.Value, args []js.Value) interface{} {
 	}
 	err := maxsat.AddConstraint(args[0].String())
 	if err != nil {
-		fmt.Printf("AddConstraint returned error: %s\n", err)
 		return err.Error()
 	}
 	return true
@@ -30,7 +29,6 @@ func isSat(this js.Value, args []js.Value) interface{} {
 func getModel(this js.Value, args []js.Value) interface{} {
 	model, err := maxsat.GetModel()
 	if err != nil {
-		fmt.Printf("GetModel returned error: %s\n", err)
 		return err.Error()
 	}
 	return convertModel(model)

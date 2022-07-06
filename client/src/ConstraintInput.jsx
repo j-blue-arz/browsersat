@@ -9,6 +9,7 @@ export class ConstraintInput extends React.Component {
 
         this.state = {
             inputString: "a->(b|c)",
+            invalidInput: false
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -17,7 +18,7 @@ export class ConstraintInput extends React.Component {
     }
 
     handleChange(event) {
-        this.setState({ inputString: event.target.value });
+        this.setState({ inputString: event.target.value, invalidInput: false });
     }
 
     handleKeyDown(event) {
@@ -27,8 +28,13 @@ export class ConstraintInput extends React.Component {
     }
 
     handleSubmit(event) {
-        if (this.state.inputString.trim !== "") {
-            this.props.onAddConstraint(this.state.inputString);
+        if (this.state.inputString.trim() !== "") {
+            const success = this.props.onAddConstraint(this.state.inputString);
+            if(success){
+                this.setState({ inputString: "", invalidInput: false });
+            } else {
+                this.setState({ invalidInput: true });
+            }
         }
     }
 
@@ -39,7 +45,7 @@ export class ConstraintInput extends React.Component {
                     Enter constraint:
                     <input
                         type="text"
-                        className="constraint-input__field"
+                        className={`constraint-input__field ${this.state.invalidInput ? "constraint-input__field--invalid" : ""}`}
                         value={this.state.inputString}
                         onChange={this.handleChange}
                         onKeyDown={this.handleKeyDown}

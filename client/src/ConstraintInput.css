@@ -10,4 +10,10 @@
 
 .constraint-input__field {
     margin-right: .5rem;
+    border: 1px solid;
+}
+
+.constraint-input__field--invalid {
+    border-color: red;
+    background: lightsalmon;
 }

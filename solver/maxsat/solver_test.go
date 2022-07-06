@@ -37,6 +37,31 @@ func TestAddConstraintMultipleTimes(t *testing.T) {
 	assertUnsat(t)
 }
 
+func TestDigitAsLiteral(t *testing.T) {
+	Init()
+	AddConstraint("7 | 8")
+	AddConstraint("^8")
+	assertSat(t)
+	assertTrue("7", t)
+	assertFalse("8", t)
+}
+
+func TestAddConstraintParserError(t *testing.T) {
+	cases := []string{"^", "^^", "a||b", "&7&b"}
+	for _, input := range cases {
+		Init()
+		AddConstraint("a | ^b")
+		err := AddConstraint(input)
+		if err == nil {
+			t.Errorf("Expected an parsig error for input '%s', was nil", input)
+		}
+		assertSat(t)
+		AddConstraint("b")
+		assertSat(t)
+		assertTrue("a", t)
+	}
+}
+
 func TestInit(t *testing.T) {
 	Init()
 	AddConstraint("a")
@@ -119,11 +144,26 @@ func assertUnsat(t *testing.T) {
 }
 
 func assertTrue(literal string, t *testing.T) {
+	assertLiteralValue(literal, true, t)
+}
+
+func assertFalse(literal string, t *testing.T) {
+	assertLiteralValue(literal, false, t)
+}
+
+func assertLiteralValue(literal string, expected bool, t *testing.T) {
 	result, _ := GetModel()
-	val := result[literal]
-	if !val {
-		t.Errorf("expected %q to be true, but was %t", literal, val)
+	actual := result[literal]
+	if actual != expected {
+		t.Errorf("expected %q to be %s, but was %t", literal, boolToStr(expected), actual)
 	}
+}
+
+func boolToStr(value bool) string {
+	if value {
+		return "true"
+	}
+	return "false"
 }
 
 func toStr(model map[string]bool) string {

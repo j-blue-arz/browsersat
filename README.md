@@ -15,11 +15,11 @@ Open `localhost` in your browser.
 - [x] User can flip literals
 - [x] reduce binary size with TinyGo
 - [x] Ship it
-- [ ] Continuous delivery 
+- [x] Input validation
+- [ ] Support pseudo-boolean logic
+
 
 ### Other ideas
-* Validate input
-* Support pseudo-boolean logic
 * SVG display to increase readability
 * Show evaluation of subformulas
 * Create UI for a specific use-case, e.g. some planning, scheduling or data science problem - or just simply Sudoku.

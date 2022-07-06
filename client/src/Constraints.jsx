@@ -22,23 +22,27 @@ export class Constraints extends React.Component {
     handleAddConstraint(constraint) {
         if (window.satsolver) {
             constraint = constraint.replaceAll(" ", "");
-            window.satsolver.addConstraint(constraint);
+            const result = window.satsolver.addConstraint(constraint);
+            if (result === true) {
+                const constraints = this.state.constraints.slice();
+                constraints.push(constraint);
+                this.setState({ constraints: constraints });
 
-            const constraints = this.state.constraints.slice();
-            constraints.push(constraint);
-            this.setState({ constraints: constraints });
-
-            const satisfiable = window.satsolver.isSat()
-            this.setState({ satisfiable: satisfiable });
-            if (satisfiable) {
-                const model = window.satsolver.getModel();
-                this.setState({ model: model });
+                const satisfiable = window.satsolver.isSat();
+                this.setState({ satisfiable: satisfiable });
+                if (satisfiable) {
+                    const model = window.satsolver.getModel();
+                    this.setState({ model: model });
+                }
+                return true;
+            } else {
+                return false;
             }
         }
     }
 
     handleClearConstraints() {
-        this.setState({constraints: [], model: {}, satisfiable: true});
+        this.setState({ constraints: [], model: {}, satisfiable: true });
         if (window.satsolver) {
             window.satsolver.initializeSolver();
         }
@@ -47,7 +51,7 @@ export class Constraints extends React.Component {
     handleFlipLiteral(literal) {
         if (window.satsolver) {
             const possible = window.satsolver.flipLiteral(literal);
-            if(possible) {
+            if (possible) {
                 const model = window.satsolver.getModel();
                 this.setState({ model: model });
             }
@@ -59,9 +63,13 @@ export class Constraints extends React.Component {
             <div className="constraints">
                 <div className="constraints__interaction">
                     <ConstraintInput onAddConstraint={this.handleAddConstraint} />
-                    <Button label="Clear" onClick={this.handleClearConstraints}/>
+                    <Button label="Clear" onClick={this.handleClearConstraints} />
                 </div>
-                <ConstraintsDisplay constraints={this.state.constraints} model={this.state.model} onFlipLiteral={this.handleFlipLiteral} />
+                <ConstraintsDisplay
+                    constraints={this.state.constraints}
+                    model={this.state.model}
+                    onFlipLiteral={this.handleFlipLiteral}
+                />
                 <SatStatus isSat={this.state.satisfiable} />
             </div>
         );
