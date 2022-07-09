@@ -1,4 +1,4 @@
-FROM tinygo/tinygo:0.23.0 as solver-base
+FROM tinygo/tinygo:0.24.0 as solver-base
 
 WORKDIR /go_app
 
