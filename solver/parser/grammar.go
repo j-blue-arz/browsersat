@@ -49,8 +49,15 @@ type Factor struct {
 	SubExpression *Expression `parser:"| '(' @@ ')'"`
 }
 
+type Boolean bool
+
+func (b *Boolean) Capture(values []string) error {
+	*b = values[0] == "true"
+	return nil
+}
+
 type Constant struct {
-	Value *bool `parser:"( @'true' | 'false' )"`
+	Value *Boolean `parser:"@( 'true' | 'false' )"`
 }
 
 type Literal struct {

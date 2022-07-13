@@ -63,19 +63,26 @@ func (e Unary) String() (string, error) {
 	}
 	result, err := e.Unary.String()
 	if err != nil {
-		return "!" + result, err
-	} else {
 		return "", err
+	} else {
+		return "not(" + result + ")", err
 	}
-
 }
 
 func (e Factor) String() (string, error) {
-	return e.Literal.String()
+	if e.Constant != nil {
+		return e.Constant.String()
+	} else if e.Literal != nil {
+		return e.Literal.String()
+	} else if e.SubExpression != nil {
+		return e.SubExpression.String()
+	} else {
+		return "", fmt.Errorf("factor must be one of constant, literal, or subexpression")
+	}
 }
 
 func (e Constant) String() (string, error) {
-	if *e.Value {
+	if *(e.Value) {
 		return "true", nil
 	} else {
 		return "false", nil

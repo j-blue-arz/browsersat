@@ -6,11 +6,10 @@ import (
 	"github.com/alecthomas/participle/v2"
 )
 
-var testCases = []struct {
+var testCases = map[string][]struct {
 	in       string
 	expected string
-}{
-	{"foo", "foo"},
+}{"and-or": {
 	{"a|b", "or(a, b)"},
 	{"a&b", "and(a, b)"},
 	{"a&b&c", "and(a, b, c)"},
@@ -18,10 +17,23 @@ var testCases = []struct {
 	{"a|b&c|d", "or(a, and(b, c), d)"},
 	{"a&b|c&d", "or(and(a, b), and(c, d))"},
 	{"a&b|c|d&e", "or(and(a, b), c, and(d, e))"},
+}, "factors": {
+	{"foo", "foo"},
+	{"!foo", "not(foo)"},
+	{"!foo | true", "or(not(foo), true)"},
+	{"false & true", "and(false, true)"},
+}}
+
+func TestParseAndOr(t *testing.T) {
+	runTests(t, "and-or")
 }
 
-func TestParse(t *testing.T) {
-	for _, testCase := range testCases {
+func TestParseFactors(t *testing.T) {
+	runTests(t, "factors")
+}
+
+func runTests(t *testing.T, testType string) {
+	for _, testCase := range testCases[testType] {
 		t.Run(testCase.in, func(t *testing.T) {
 			p := participle.MustBuild[Expression](participle.UseLookahead(2))
 			expr, err := p.ParseString("", testCase.in)
