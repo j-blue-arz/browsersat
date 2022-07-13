@@ -1,2 +1,4 @@
+github.com/alecthomas/participle/v2 v2.0.0-beta.4 h1:ublfGBm+x+p2j7KotHhrUMbKtejT7M0Gv1Mt1u3absw=
+github.com/alecthomas/participle/v2 v2.0.0-beta.4/go.mod h1:RC764t6n4L8D8ITAJv0qdokritYSNR3wV5cVwmIEaMM=
 github.com/j-blue-arz/tiny-gophersat v1.3.2 h1:yId3DckHAao+WqTNipS06PXQ9Z1rosuUCTWl+9Qp6Oo=
 github.com/j-blue-arz/tiny-gophersat v1.3.2/go.mod h1:WARYKALsD0y/OGNQNr8yVmEhp8QRGnmFylV7WqhpAM4=
