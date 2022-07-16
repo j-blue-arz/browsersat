@@ -77,7 +77,7 @@ var expressionLexer = lexer.MustSimple([]lexer.SimpleRule{
 
 func parseExpression(s string) (*Expression, error) {
 	expressionParser := participle.MustBuild[Expression](
-		participle.UseLookahead(2),
+		participle.UseLookahead(1),
 		participle.Lexer(expressionLexer),
 		participle.Elide("Whitespace"))
 	return expressionParser.ParseString("", s)
