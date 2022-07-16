@@ -18,11 +18,12 @@ var testCases = map[string][]struct {
 }, "factors": {
 	{"foo", "foo"},
 	{"!foo", "not(foo)"},
-	{"!foo | true", "or(not(foo), true)"},
-	{"false & true", "and(false, true)"},
+	{"!foo | true", "or(not(foo), TRUE)"},
+	{"false & true", "and(FALSE, TRUE)"},
 }, "subexpressions": {
 	{"(foo)", "foo"},
 	{"(a | b)", "or(a, b)"},
+	{"(!(a & b) | !(!c))", "or(not(and(a, b)), not(not(c)))"},
 	{"(a & (b & (c & d)) & e)", "and(a, and(b, and(c, d)), e)"},
 	{"((a|b)&(c|(d)))", "and(or(a, b), or(c, d))"},
 	{"a&((b|(c&d|e))&f|g)", "and(a, or(and(or(b, or(and(c, d), e)), f), g))"},

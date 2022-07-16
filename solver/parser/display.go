@@ -92,9 +92,9 @@ func (e Factor) string() (string, error) {
 
 func (e Constant) string() (string, error) {
 	if *(e.Value) {
-		return "true", nil
+		return "TRUE", nil
 	} else {
-		return "false", nil
+		return "FALSE", nil
 	}
 }
 
