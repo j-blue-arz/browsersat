@@ -1,8 +1,10 @@
 package parser
 
-// expression    	→ equivalence ;
-// equivalence   	→ implication ( "=" equivalence )* ;
-// implication  	→ disj ( "->" implication )* ;
+import "github.com/alecthomas/participle/v2"
+
+// expression    	→ implication ;
+// implication   	→ disj ( "=" disj ) ;
+//				  	       | "->" disj )? ;
 // disj  			→ conj ( "|" disj )* ;
 // conj 			→ unary (  "&"  conj )* ;
 // unary      		→ ( "!" ) unary
@@ -14,17 +16,13 @@ package parser
 // constant			→ true | false
 
 type Expression struct {
-	Equivalence *Equivalence `parser:"@@"`
-}
-
-type Equivalence struct {
 	Implication *Implication `parser:"@@"`
-	Next        *Equivalence `parser:"('='  @@)?"`
 }
 
 type Implication struct {
-	Disjunction *Disjunction `parser:"@@"`
-	Next        *Implication `parser:"('->'  @@)?"`
+	Left        *Disjunction `parser:"@@"`
+	Implication *Disjunction `parser:"( '>'  @@"`
+	Equivalence *Disjunction `parser:"| '='  @@ )?"`
 }
 
 type Disjunction struct {
@@ -44,9 +42,9 @@ type Unary struct {
 }
 
 type Factor struct {
-	Constant      *Constant   `parser:"@@"`
-	Literal       *Literal    `parser:"| @@"`
-	SubExpression *Expression `parser:"| '(' @@ ')'"`
+	Constant      *Constant    `parser:"@@"`
+	Literal       *Literal     `parser:"| @@"`
+	SubExpression *Disjunction `parser:"| '(' @@ ')'"`
 }
 
 type Boolean bool
@@ -62,4 +60,9 @@ type Constant struct {
 
 type Literal struct {
 	Name *string `parser:"@Ident"`
+}
+
+func parse(s string) (*Expression, error) {
+	p := participle.MustBuild[Expression](participle.UseLookahead(2))
+	return p.ParseString("", s)
 }

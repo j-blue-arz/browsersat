@@ -5,26 +5,35 @@ import (
 	"strings"
 )
 
-type Formula interface {
-	String() (string, error)
+func (e Expression) string() (string, error) {
+	return e.Implication.string()
 }
 
-func (e Expression) String() (string, error) {
-	return e.Equivalence.String()
+func (e Implication) string() (string, error) {
+	disjunction, err := e.Left.string()
+	if err != nil {
+		return "", err
+	}
+	if e.Implication != nil {
+		right, err := e.Implication.string()
+		if err != nil {
+			return "", err
+		}
+		return "implies(" + disjunction + ", " + right + ")", nil
+	} else if e.Equivalence != nil {
+		right, err := e.Equivalence.string()
+		if err != nil {
+			return "", err
+		}
+		return "eq(" + disjunction + ", " + right + ")", nil
+	}
+	return disjunction, nil
 }
 
-func (e Equivalence) String() (string, error) {
-	return e.Implication.String()
-}
-
-func (e Implication) String() (string, error) {
-	return e.Disjunction.String()
-}
-
-func (e Disjunction) String() (string, error) {
+func (e Disjunction) string() (string, error) {
 	operands := make([]string, 0)
 	for cur := &e; cur != nil; cur = cur.Next {
-		operand, err := cur.Conjunction.String()
+		operand, err := cur.Conjunction.string()
 		if err != nil {
 			return "", err
 		}
@@ -39,10 +48,10 @@ func (e Disjunction) String() (string, error) {
 	}
 }
 
-func (e Conjunction) String() (string, error) {
+func (e Conjunction) string() (string, error) {
 	operands := make([]string, 0)
 	for cur := &e; cur != nil; cur = cur.Next {
-		operand, err := cur.Unary.String()
+		operand, err := cur.Unary.string()
 		if err != nil {
 			return "", err
 		}
@@ -57,11 +66,11 @@ func (e Conjunction) String() (string, error) {
 	}
 }
 
-func (e Unary) String() (string, error) {
+func (e Unary) string() (string, error) {
 	if e.Factor != nil {
-		return e.Factor.String()
+		return e.Factor.string()
 	}
-	result, err := e.Unary.String()
+	result, err := e.Unary.string()
 	if err != nil {
 		return "", err
 	} else {
@@ -69,19 +78,19 @@ func (e Unary) String() (string, error) {
 	}
 }
 
-func (e Factor) String() (string, error) {
+func (e Factor) string() (string, error) {
 	if e.Constant != nil {
-		return e.Constant.String()
+		return e.Constant.string()
 	} else if e.Literal != nil {
-		return e.Literal.String()
+		return e.Literal.string()
 	} else if e.SubExpression != nil {
-		return e.SubExpression.String()
+		return e.SubExpression.string()
 	} else {
 		return "", fmt.Errorf("factor must be one of constant, literal, or subexpression")
 	}
 }
 
-func (e Constant) String() (string, error) {
+func (e Constant) string() (string, error) {
 	if *(e.Value) {
 		return "true", nil
 	} else {
@@ -89,6 +98,6 @@ func (e Constant) String() (string, error) {
 	}
 }
 
-func (e Literal) String() (string, error) {
+func (e Literal) string() (string, error) {
 	return *e.Name, nil
 }
