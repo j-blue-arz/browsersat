@@ -27,13 +27,13 @@ var testCases = map[string][]struct {
 	{"((a|b)&(c|(d)))", "and(or(a, b), or(c, d))"},
 	{"a&((b|(c&d|e))&f|g)", "and(a, or(and(or(b, or(and(c, d), e)), f), g))"},
 }, "implies-equiv": {
-	{"a>b", "implies(a, b)"},
+	{"a->b", "implies(a, b)"},
 	{"a=b", "eq(a, b)"},
 	{"a&b=c|d", "eq(and(a, b), or(c, d))"},
-	{"a&b>c|d", "implies(and(a, b), or(c, d))"},
+	{"a&b->c|d", "implies(and(a, b), or(c, d))"},
 }, "errors": {
 	{"a=b=c", ""},
-	{"a>b>c", ""},
+	{"a->b->c", ""},
 	{"a(|b)|c", ""},
 	{"a|(b|c", ""},
 	{"a|()|c", ""},
@@ -58,7 +58,7 @@ func TestParseImplications(t *testing.T) {
 func TestParseErrors(t *testing.T) {
 	for _, testCase := range testCases["errors"] {
 		t.Run(testCase.in, func(t *testing.T) {
-			_, err := parse(testCase.in)
+			_, err := parseExpression(testCase.in)
 			if err == nil {
 				t.Fatalf("Parser should error, but did not")
 			}
@@ -69,7 +69,7 @@ func TestParseErrors(t *testing.T) {
 func runTests(t *testing.T, testType string) {
 	for _, testCase := range testCases[testType] {
 		t.Run(testCase.in, func(t *testing.T) {
-			expr, err := parse(testCase.in)
+			expr, err := parseExpression(testCase.in)
 			if err != nil {
 				t.Fatal(err)
 			}

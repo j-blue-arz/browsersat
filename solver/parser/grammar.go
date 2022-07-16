@@ -1,6 +1,7 @@
 package parser
 
 import "github.com/alecthomas/participle/v2"
+import "github.com/alecthomas/participle/v2/lexer"
 
 // expression    	→ implication ;
 // implication   	→ disj ( "=" disj ) ;
@@ -21,22 +22,22 @@ type Expression struct {
 
 type Implication struct {
 	Left        *Disjunction `parser:"@@"`
-	Implication *Disjunction `parser:"( '>'  @@"`
-	Equivalence *Disjunction `parser:"| '='  @@ )?"`
+	Implication *Disjunction `parser:"( ImplicationOperator  @@"`
+	Equivalence *Disjunction `parser:"| EquivalenceOperator  @@ )?"`
 }
 
 type Disjunction struct {
 	Conjunction *Conjunction `parser:"@@"`
-	Next        *Disjunction `parser:"('|'  @@)?"`
+	Next        *Disjunction `parser:"(OrOperator  @@)?"`
 }
 
 type Conjunction struct {
 	Unary *Unary       `parser:"@@"`
-	Next  *Conjunction `parser:"('&'  @@)?"`
+	Next  *Conjunction `parser:"(AndOperator  @@)?"`
 }
 
 type Unary struct {
-	Not    string  `parser:"( @( '!' )"`
+	Not    string  `parser:"( @( NotOperator )"`
 	Unary  *Unary  `parser:" @@ )"`
 	Factor *Factor `parser:"| @@"`
 }
@@ -59,10 +60,25 @@ type Constant struct {
 }
 
 type Literal struct {
-	Name *string `parser:"@Ident"`
+	Name *string `parser:"@LiteralName"`
 }
 
-func parse(s string) (*Expression, error) {
-	p := participle.MustBuild[Expression](participle.UseLookahead(2))
-	return p.ParseString("", s)
+var expressionLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "ImplicationOperator", Pattern: `->`},
+	{Name: "EquivalenceOperator", Pattern: `=`},
+	{Name: "AndOperator", Pattern: `&`},
+	{Name: "OrOperator", Pattern: `\|`},
+	{Name: "NotOperator", Pattern: `!`},
+	{Name: "Parentheses", Pattern: `\(|\)`},
+	{Name: "Value", Pattern: `true|false`},
+	{Name: "LiteralName", Pattern: `[a-zA-Z_]\w*`},
+	{Name: "Whitespace", Pattern: `[ \t]+`},
+})
+
+func parseExpression(s string) (*Expression, error) {
+	expressionParser := participle.MustBuild[Expression](
+		participle.UseLookahead(2),
+		participle.Lexer(expressionLexer),
+		participle.Elide("Whitespace"))
+	return expressionParser.ParseString("", s)
 }
