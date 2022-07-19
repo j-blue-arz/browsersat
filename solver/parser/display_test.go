@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var testCases = map[string][]struct {
+var displayTestCases = map[string][]struct {
 	in       string
 	expected string
 }{"and-or": {
@@ -41,23 +41,23 @@ var testCases = map[string][]struct {
 }}
 
 func TestParseAndOr(t *testing.T) {
-	runTests(t, "and-or")
+	runDisplayTests(t, "and-or")
 }
 
 func TestParseFactors(t *testing.T) {
-	runTests(t, "factors")
+	runDisplayTests(t, "factors")
 }
 
 func TestParseSubexpressions(t *testing.T) {
-	runTests(t, "subexpressions")
+	runDisplayTests(t, "subexpressions")
 }
 
 func TestParseImplications(t *testing.T) {
-	runTests(t, "implies-equiv")
+	runDisplayTests(t, "implies-equiv")
 }
 
 func TestParseErrors(t *testing.T) {
-	for _, testCase := range testCases["errors"] {
+	for _, testCase := range displayTestCases["errors"] {
 		t.Run(testCase.in, func(t *testing.T) {
 			_, err := parseExpression(testCase.in)
 			if err == nil {
@@ -67,8 +67,8 @@ func TestParseErrors(t *testing.T) {
 	}
 }
 
-func runTests(t *testing.T, testType string) {
-	for _, testCase := range testCases[testType] {
+func runDisplayTests(t *testing.T, testType string) {
+	for _, testCase := range displayTestCases[testType] {
 		t.Run(testCase.in, func(t *testing.T) {
 			expr, err := parseExpression(testCase.in)
 			if err != nil {
