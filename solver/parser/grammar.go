@@ -60,7 +60,7 @@ type Constant struct {
 }
 
 type Literal struct {
-	Name *string `parser:"@LiteralName"`
+	Name string `parser:"@LiteralName"`
 }
 
 var expressionLexer = lexer.MustSimple([]lexer.SimpleRule{

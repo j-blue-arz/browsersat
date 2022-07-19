@@ -99,5 +99,5 @@ func (e Constant) string() (string, error) {
 }
 
 func (e Literal) string() (string, error) {
-	return *e.Name, nil
+	return e.Name, nil
 }
