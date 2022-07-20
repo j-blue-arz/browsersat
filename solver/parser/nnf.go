@@ -47,7 +47,13 @@ type lit struct {
 
 func (l lit) nnf() formula           { return l }
 func (l lit) subformulas() []formula { return make([]formula, 0) }
-func (l lit) symbol() string         { return l.name }
+func (l lit) symbol() string {
+	if l.negated {
+		return "!" + l.name
+	} else {
+		return l.name
+	}
+}
 
 func toString(f formula) string {
 	subformulas := f.subformulas()
@@ -62,34 +68,48 @@ func toString(f formula) string {
 	}
 }
 
-func (e Expression) toNNF() formula {
-	return e.Implication.toNNF()
+func (e Expression) toNNF(negated bool) formula {
+	return e.Implication.toNNF(negated)
 }
 
-func (i Implication) toNNF() formula {
-	return i.Left.toNNF()
+func (i Implication) toNNF(negated bool) formula {
+	return i.Left.toNNF(negated)
 }
 
-func (d Disjunction) toNNF() formula {
-	return d.Conjunction.toNNF()
+func (d Disjunction) toNNF(negated bool) formula {
+	return d.Conjunction.toNNF(negated)
 }
 
-func (c Conjunction) toNNF() formula {
-	return c.Unary.toNNF()
+func (c Conjunction) toNNF(negated bool) formula {
+	return c.Unary.toNNF(negated)
 }
 
-func (u Unary) toNNF() formula {
-	return u.Factor.toNNF()
-}
-
-func (f Factor) toNNF() formula {
-	return f.Constant.toNNF()
-}
-
-func (c Constant) toNNF() formula {
-	if *(c.Value) {
-		return True
+func (u Unary) toNNF(negated bool) formula {
+	if u.Not != "" {
+		return u.Unary.toNNF(!negated)
 	} else {
-		return False
+		return u.Factor.toNNF(negated)
 	}
+}
+
+func (f Factor) toNNF(negated bool) formula {
+	if f.Constant != nil {
+		return f.Constant.toNNF(negated)
+	} else if f.Literal != nil {
+		return f.Literal.toNNF(negated)
+	} else {
+		return f.SubExpression.toNNF(negated)
+	}
+}
+
+func (c Constant) toNNF(negated bool) formula {
+	if bool(*(c.Value)) == negated {
+		return False
+	} else {
+		return True
+	}
+}
+
+func (l Literal) toNNF(negated bool) formula {
+	return lit{name: l.Name, negated: negated}
 }
