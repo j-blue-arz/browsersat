@@ -7,7 +7,7 @@ import (
 
 var nnfTestCases = []struct {
 	in       string
-	expected formula
+	expected nnf
 }{
 	{"true", True},
 	{"false", False},
@@ -30,7 +30,7 @@ func TestAllNnfCases(t *testing.T) {
 	}
 }
 
-func equalFormula(f1 formula, f2 formula) bool {
+func equalFormula(f1 nnf, f2 nnf) bool {
 	return reflect.DeepEqual(f1, f2)
 }
 

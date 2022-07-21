@@ -2,9 +2,8 @@ package parser
 
 import "strings"
 
-type formula interface {
-	nnf() formula
-	subformulas() []formula
+type nnf interface {
+	subformulas() []nnf
 	symbol() string
 }
 
@@ -14,39 +13,28 @@ type falseConst struct{}
 var True trueConst = trueConst{}
 var False falseConst = falseConst{}
 
-func (t trueConst) nnf() formula           { return t }
-func (t trueConst) subformulas() []formula { return make([]formula, 0) }
-func (t trueConst) symbol() string         { return "true" }
+func (t trueConst) subformulas() []nnf { return make([]nnf, 0) }
+func (t trueConst) symbol() string     { return "true" }
 
-func (f falseConst) nnf() formula           { return f }
-func (f falseConst) subformulas() []formula { return make([]formula, 0) }
-func (f falseConst) symbol() string         { return "false" }
+func (f falseConst) subformulas() []nnf { return make([]nnf, 0) }
+func (f falseConst) symbol() string     { return "false" }
 
-type and []formula
+type and []nnf
 
-func (a and) nnf() formula           { return a }
-func (a and) subformulas() []formula { return a }
-func (a and) symbol() string         { return "and" }
+func (a and) subformulas() []nnf { return a }
+func (a and) symbol() string     { return "and" }
 
-type or []formula
+type or []nnf
 
-func (o or) nnf() formula           { return o }
-func (o or) subformulas() []formula { return o }
-func (o or) symbol() string         { return "or" }
-
-type not []formula
-
-func (n not) nnf() formula           { return n }
-func (n not) subformulas() []formula { return n }
-func (n not) symbol() string         { return "not" }
+func (o or) subformulas() []nnf { return o }
+func (o or) symbol() string     { return "or" }
 
 type lit struct {
 	name    string
 	negated bool
 }
 
-func (l lit) nnf() formula           { return l }
-func (l lit) subformulas() []formula { return make([]formula, 0) }
+func (l lit) subformulas() []nnf { return make([]nnf, 0) }
 func (l lit) symbol() string {
 	if l.negated {
 		return "!" + l.name
@@ -55,7 +43,7 @@ func (l lit) symbol() string {
 	}
 }
 
-func toString(f formula) string {
+func toString(f nnf) string {
 	subformulas := f.subformulas()
 	if len(subformulas) == 0 {
 		return f.symbol()
@@ -68,20 +56,20 @@ func toString(f formula) string {
 	}
 }
 
-func (e Expression) toNNF(negated bool) formula {
+func (e Expression) toNNF(negated bool) nnf {
 	return e.Implication.toNNF(negated)
 }
 
-func (i Implication) toNNF(negated bool) formula {
+func (i Implication) toNNF(negated bool) nnf {
 	return i.Left.toNNF(negated)
 }
 
-func (d Disjunction) toNNF(negated bool) formula {
+func (d Disjunction) toNNF(negated bool) nnf {
 	return d.Conjunction.toNNF(negated)
 }
 
-func (c Conjunction) toNNF(negated bool) formula {
-	operands := make([]formula, 0)
+func (c Conjunction) toNNF(negated bool) nnf {
+	operands := make([]nnf, 0)
 	for cur := &c; cur != nil; cur = cur.Next {
 		operand := cur.Unary.toNNF(negated)
 		operands = append(operands, operand)
@@ -99,7 +87,7 @@ func (c Conjunction) toNNF(negated bool) formula {
 	}
 }
 
-func (u Unary) toNNF(negated bool) formula {
+func (u Unary) toNNF(negated bool) nnf {
 	if u.Not != "" {
 		return u.Unary.toNNF(!negated)
 	} else {
@@ -107,7 +95,7 @@ func (u Unary) toNNF(negated bool) formula {
 	}
 }
 
-func (f Factor) toNNF(negated bool) formula {
+func (f Factor) toNNF(negated bool) nnf {
 	if f.Constant != nil {
 		return f.Constant.toNNF(negated)
 	} else if f.Literal != nil {
@@ -117,7 +105,7 @@ func (f Factor) toNNF(negated bool) formula {
 	}
 }
 
-func (c Constant) toNNF(negated bool) formula {
+func (c Constant) toNNF(negated bool) nnf {
 	if bool(*(c.Value)) == negated {
 		return False
 	} else {
@@ -125,6 +113,6 @@ func (c Constant) toNNF(negated bool) formula {
 	}
 }
 
-func (l Literal) toNNF(negated bool) formula {
+func (l Literal) toNNF(negated bool) nnf {
 	return lit{name: l.Name, negated: negated}
 }
