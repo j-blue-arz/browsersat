@@ -81,7 +81,22 @@ func (d Disjunction) toNNF(negated bool) formula {
 }
 
 func (c Conjunction) toNNF(negated bool) formula {
-	return c.Unary.toNNF(negated)
+	operands := make([]formula, 0)
+	for cur := &c; cur != nil; cur = cur.Next {
+		operand := cur.Unary.toNNF(negated)
+		operands = append(operands, operand)
+	}
+	if len(operands) == 1 {
+		return operands[0]
+	} else if len(operands) > 1 {
+		if negated {
+			return or(operands)
+		} else {
+			return and(operands)
+		}
+	} else { // empty conjunction
+		return True
+	}
 }
 
 func (u Unary) toNNF(negated bool) formula {
