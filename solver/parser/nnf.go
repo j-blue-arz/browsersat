@@ -65,7 +65,22 @@ func (i Implication) toNNF(negated bool) nnf {
 }
 
 func (d Disjunction) toNNF(negated bool) nnf {
-	return d.Conjunction.toNNF(negated)
+	operands := make([]nnf, 0)
+	for cur := &d; cur != nil; cur = cur.Next {
+		operand := cur.Conjunction.toNNF(negated)
+		operands = append(operands, operand)
+	}
+	if len(operands) == 1 {
+		return operands[0]
+	} else if len(operands) > 1 {
+		if negated {
+			return and(operands)
+		} else {
+			return or(operands)
+		}
+	} else { // empty conjunction
+		return False
+	}
 }
 
 func (c Conjunction) toNNF(negated bool) nnf {
