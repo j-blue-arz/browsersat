@@ -65,15 +65,15 @@ func (i Implication) toNNF(negated bool) nnf {
 	if i.Implication != nil {
 		left := i.Left.toNNF(true)
 		right := i.Implication.toNNF(false)
-		return makeOr(left, right)
+		return makeOr([]nnf{left, right})
 	} else {
 		return i.Left.toNNF(false)
 	}
 }
 
-func makeOr(f1 nnf, f2 nnf) nnf {
+func makeOr(operands []nnf) nnf {
 	var result or
-	for _, f := range []nnf{f1, f2} {
+	for _, f := range operands {
 		switch f := f.(type) {
 		case or:
 			result = append(result, f...)
@@ -100,7 +100,7 @@ func (d Disjunction) toNNF(negated bool) nnf {
 		if negated {
 			return and(operands)
 		} else {
-			return or(operands)
+			return makeOr(operands)
 		}
 	} else { // empty conjunction
 		return False
