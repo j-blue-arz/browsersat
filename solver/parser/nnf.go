@@ -61,7 +61,31 @@ func (e Expression) toNNF(negated bool) nnf {
 }
 
 func (i Implication) toNNF(negated bool) nnf {
-	return i.Left.toNNF(negated)
+	// negated == false, because Implication can only be top-level operator in grammar
+	if i.Implication != nil {
+		left := i.Left.toNNF(true)
+		right := i.Implication.toNNF(false)
+		return makeOr(left, right)
+	} else {
+		return i.Left.toNNF(false)
+	}
+}
+
+func makeOr(f1 nnf, f2 nnf) nnf {
+	var result or
+	for _, f := range []nnf{f1, f2} {
+		switch f := f.(type) {
+		case or:
+			result = append(result, f...)
+		case falseConst:
+		case trueConst:
+			return True
+		default:
+			result = append(result, f)
+		}
+	}
+
+	return result
 }
 
 func (d Disjunction) toNNF(negated bool) nnf {
