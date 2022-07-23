@@ -63,9 +63,15 @@ func (e Expression) toNNF(negated bool) nnf {
 func (i Implication) toNNF(negated bool) nnf {
 	// negated == false, because Implication can only be top-level operator in grammar
 	if i.Implication != nil {
-		left := i.Left.toNNF(true)
+		notLeft := i.Left.toNNF(true)
 		right := i.Implication.toNNF(false)
-		return makeOr([]nnf{left, right})
+		return makeOr(notLeft, right)
+	} else if i.Equivalence != nil {
+		left := i.Left.toNNF(false)
+		right := i.Equivalence.toNNF(false)
+		notLeft := i.Left.toNNF(true)
+		notRight := i.Equivalence.toNNF(true)
+		return makeAnd(makeOr(notLeft, right), makeOr(left, notRight))
 	} else {
 		return i.Left.toNNF(false)
 	}
@@ -78,9 +84,9 @@ func (d Disjunction) toNNF(negated bool) nnf {
 		operands = append(operands, operand)
 	}
 	if negated {
-		return makeAnd(operands)
+		return makeAnd(operands...)
 	} else {
-		return makeOr(operands)
+		return makeOr(operands...)
 	}
 }
 
@@ -91,9 +97,9 @@ func (c Conjunction) toNNF(negated bool) nnf {
 		operands = append(operands, operand)
 	}
 	if negated {
-		return makeOr(operands)
+		return makeOr(operands...)
 	} else {
-		return makeAnd(operands)
+		return makeAnd(operands...)
 	}
 }
 
@@ -127,7 +133,7 @@ func (l Literal) toNNF(negated bool) nnf {
 	return lit{name: l.Name, negated: negated}
 }
 
-func makeOr(operands []nnf) nnf {
+func makeOr(operands ...nnf) nnf {
 	var result or
 	for _, f := range operands {
 		switch f := f.(type) {
@@ -149,7 +155,7 @@ func makeOr(operands []nnf) nnf {
 	}
 }
 
-func makeAnd(operands []nnf) nnf {
+func makeAnd(operands ...nnf) nnf {
 	var result and
 	for _, f := range operands {
 		switch f := f.(type) {
