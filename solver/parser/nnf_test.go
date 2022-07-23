@@ -18,7 +18,12 @@ var nnfTestCases = []struct {
 	{"(a & b)", and{literal("a"), literal("b")}},
 	{"!(a | !b)", and{literalNeg("a"), literal("b")}},
 	{"!a | !b", or{literalNeg("a"), literalNeg("b")}},
+	{"a & true", literal("a")},
+	{"a & false", False},
+	{"a | true", True},
+	{"a | false", literal("a")},
 	{"((a | b | c) | d | e)", or{literal("a"), literal("b"), literal("c"), literal("d"), literal("e")}},
+	{"((a & b & c) & d & e)", and{literal("a"), literal("b"), literal("c"), literal("d"), literal("e")}},
 	{"(!a & b) -> !(c & d)", or{literal("a"), literalNeg("b"), literalNeg("c"), literalNeg("d")}},
 }
 

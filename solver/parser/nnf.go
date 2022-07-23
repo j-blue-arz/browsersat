@@ -71,39 +71,16 @@ func (i Implication) toNNF(negated bool) nnf {
 	}
 }
 
-func makeOr(operands []nnf) nnf {
-	var result or
-	for _, f := range operands {
-		switch f := f.(type) {
-		case or:
-			result = append(result, f...)
-		case falseConst:
-		case trueConst:
-			return True
-		default:
-			result = append(result, f)
-		}
-	}
-
-	return result
-}
-
 func (d Disjunction) toNNF(negated bool) nnf {
 	operands := make([]nnf, 0)
 	for cur := &d; cur != nil; cur = cur.Next {
 		operand := cur.Conjunction.toNNF(negated)
 		operands = append(operands, operand)
 	}
-	if len(operands) == 1 {
-		return operands[0]
-	} else if len(operands) > 1 {
-		if negated {
-			return and(operands)
-		} else {
-			return makeOr(operands)
-		}
-	} else { // empty conjunction
-		return False
+	if negated {
+		return makeAnd(operands)
+	} else {
+		return makeOr(operands)
 	}
 }
 
@@ -113,16 +90,10 @@ func (c Conjunction) toNNF(negated bool) nnf {
 		operand := cur.Unary.toNNF(negated)
 		operands = append(operands, operand)
 	}
-	if len(operands) == 1 {
-		return operands[0]
-	} else if len(operands) > 1 {
-		if negated {
-			return or(operands)
-		} else {
-			return and(operands)
-		}
-	} else { // empty conjunction
-		return True
+	if negated {
+		return makeOr(operands)
+	} else {
+		return makeAnd(operands)
 	}
 }
 
@@ -154,4 +125,48 @@ func (c Constant) toNNF(negated bool) nnf {
 
 func (l Literal) toNNF(negated bool) nnf {
 	return lit{name: l.Name, negated: negated}
+}
+
+func makeOr(operands []nnf) nnf {
+	var result or
+	for _, f := range operands {
+		switch f := f.(type) {
+		case or:
+			result = append(result, f...)
+		case falseConst:
+		case trueConst:
+			return True
+		default:
+			result = append(result, f)
+		}
+	}
+	if len(result) == 0 {
+		return False
+	} else if len(result) == 1 {
+		return result[0]
+	} else {
+		return result
+	}
+}
+
+func makeAnd(operands []nnf) nnf {
+	var result and
+	for _, f := range operands {
+		switch f := f.(type) {
+		case and:
+			result = append(result, f...)
+		case falseConst:
+			return False
+		case trueConst:
+		default:
+			result = append(result, f)
+		}
+	}
+	if len(result) == 0 {
+		return True
+	} else if len(result) == 1 {
+		return result[0]
+	} else {
+		return result
+	}
 }
