@@ -54,11 +54,9 @@ function LongInfo(props) {
                 number of flipped literals.
             </p>
             <p>
-                The grammar is currently defined by the{" "}
-                <a href="https://github.com/crillab/gophersat">gophersat project</a>, described{" "}
-                <a href="https://pkg.go.dev/github.com/crillab/gophersat@v1.3.1/bf#Parse">here</a>.
-                E.g. "^" is the unary negation operator, "-&gt;" is an implication. Uniqueness is
-                currently not supported, though.
+                Symbols used for a constraint: "!" is the unary negation, "&amp;" (and), "|" (or),
+                "-&gt;" (implication), and "=" (equivalence) are binary operators.
+                An implication or an equivalence can only occur as a top-level operator and only at maximum once.
             </p>
         </div>
     );
