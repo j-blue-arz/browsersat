@@ -1,4 +1,4 @@
-FROM tinygo/tinygo:0.24.0 as solver-base
+FROM golang:1.18 as solver-base
 
 WORKDIR /go_app
 
@@ -16,8 +16,8 @@ RUN go test github.com/j-blue-arz/browsersat/solver/maxsat
 
 FROM solver-base as solver-build
 
-RUN tinygo build -o solver.wasm -target wasm wasm/main.go
-RUN cp "$(tinygo env TINYGOROOT)/targets/wasm_exec.js" .
+RUN GOOS=js GOARCH=wasm go build -o solver.wasm wasm/main.go
+RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 FROM node:16 as react-build
 
