@@ -1,4 +1,4 @@
-package parser
+package maxsat
 
 import "github.com/alecthomas/participle/v2"
 import "github.com/alecthomas/participle/v2/lexer"

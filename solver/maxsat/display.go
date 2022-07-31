@@ -1,4 +1,4 @@
-package parser
+package maxsat
 
 import (
 	"fmt"

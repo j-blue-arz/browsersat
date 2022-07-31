@@ -1,4 +1,4 @@
-package parser
+package maxsat
 
 import (
 	"reflect"
@@ -14,6 +14,8 @@ var nnfTestCases = []struct {
 	{"!true", False},
 	{"b", lit{name: "b"}},
 	{"!a", lit{name: "a", negated: true}},
+	{"!!a", lit{name: "a", negated: false}},
+	{"!!!a", lit{name: "a", negated: true}},
 	{"!(a & b)", or{literalNeg("a"), literalNeg("b")}},
 	{"(a & b)", and{literal("a"), literal("b")}},
 	{"!(a | !b)", and{literalNeg("a"), literal("b")}},
