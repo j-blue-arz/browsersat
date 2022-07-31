@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/j-blue-arz/browsersat/solver/maxsat"
 	"syscall/js"
 )
