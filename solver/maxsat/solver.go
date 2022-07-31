@@ -2,7 +2,6 @@ package maxsat
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/j-blue-arz/tiny-gophersat/solver"
 )
@@ -19,12 +18,11 @@ func Init() {
 
 func AddConstraint(inputConstraint string) error {
 	newConstraints := append(inputConstraints, inputConstraint)
-	formula, err := parse(newConstraints)
+	cnf, err := parseToCnf(newConstraints)
 	if err != nil {
 		return fmt.Errorf("could not parse constraint %q: %v", inputConstraint, err)
 	}
 	inputConstraints = newConstraints
-	cnf := AsCnf(formula)
 	newModel, err := solve(cnf)
 
 	if err != nil {
@@ -44,9 +42,8 @@ func FlipLiteral(literal string) error {
 	if _, ok := model[literal]; !ok {
 		return fmt.Errorf("literal %q not contained in model", literal)
 	}
-	formula, _ := parse(inputConstraints)
-	cnf := AsCnf(formula)
-	cnf.AddUnitLiteral(toFormula(literal, !model[literal]))
+	cnf, _ := parseToCnf(inputConstraints)
+	cnf.addUnitLiteral(toLit(literal, !model[literal]))
 	newModel, err := solve(cnf)
 	if err != nil {
 		return fmt.Errorf("flipping %q leads to UNSAT", literal)
@@ -55,12 +52,8 @@ func FlipLiteral(literal string) error {
 	return nil
 }
 
-func toFormula(literal string, value bool) Formula {
-	if value {
-		return Var(literal)
-	} else {
-		return Not(Var(literal))
-	}
+func toLit(literal string, value bool) lit {
+	return lit{name: literal, negated: !value}
 }
 
 func IsSat() bool {
@@ -75,18 +68,17 @@ func GetModel() (map[string]bool, error) {
 	}
 }
 
-func solve(cnf *Cnf) (map[string]bool, error) {
+func solve(cnf *cnf) (map[string]bool, error) {
 	newModel := solveMaxsat(cnf)
 	if newModel == nil {
 		return nil, fmt.Errorf("no model for UNSAT constraints")
 	}
-	return cnf.TransformModel(newModel), nil
+	return cnf.transformModel(newModel), nil
 }
 
-func solveMaxsat(cnf *Cnf) []bool {
+func solveMaxsat(cnf *cnf) []bool {
 	for literal, value := range model {
-		literalFormula := toFormula(literal, value)
-		cnf.AddRelaxableLiteral(literalFormula)
+		cnf.addRelaxableLiteral(toLit(literal, value))
 	}
 	weights := make([]int, len(cnf.relaxLits))
 	relaxLits := make([]solver.Lit, len(cnf.relaxLits))
@@ -106,10 +98,4 @@ func solveMaxsat(cnf *Cnf) []bool {
 	}
 	m := s.Model()
 	return m
-}
-
-func parse(input []string) (Formula, error) {
-	constraints := strings.Join(input, "; ")
-	reader := strings.NewReader(constraints)
-	return Parse(reader)
 }

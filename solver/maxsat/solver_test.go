@@ -16,9 +16,18 @@ func TestLiteralSat(t *testing.T) {
 	assertTrue("x", t)
 }
 
+func TestImplication(t *testing.T) {
+	Init()
+	err := AddConstraint("a -> b")
+	if err != nil {
+		t.Fail()
+	}
+	assertSat(t)
+}
+
 func TestFormulaUnsat(t *testing.T) {
 	Init()
-	err := AddConstraint("x & ^x")
+	err := AddConstraint("x & !x")
 	if err != nil {
 		t.Fail()
 	}
@@ -27,30 +36,21 @@ func TestFormulaUnsat(t *testing.T) {
 
 func TestAddConstraintMultipleTimes(t *testing.T) {
 	Init()
-	AddConstraint("a | ^b")
+	AddConstraint("a | !b")
 	assertSat(t)
-	AddConstraint("b | ^c")
+	AddConstraint("b | !c")
 	assertSat(t)
 	AddConstraint("c | a")
 	assertSat(t)
-	AddConstraint("^a")
+	AddConstraint("!a")
 	assertUnsat(t)
 }
 
-func TestDigitAsLiteral(t *testing.T) {
-	Init()
-	AddConstraint("7 | 8")
-	AddConstraint("^8")
-	assertSat(t)
-	assertTrue("7", t)
-	assertFalse("8", t)
-}
-
 func TestAddConstraintParserError(t *testing.T) {
-	cases := []string{"^", "^^", "a||b", "&7&b"}
+	cases := []string{"!", "!!", "a||b", "&7&b"}
 	for _, input := range cases {
 		Init()
-		AddConstraint("a | ^b")
+		AddConstraint("a | !b")
 		err := AddConstraint(input)
 		if err == nil {
 			t.Errorf("Expected an parsig error for input '%s', was nil", input)
@@ -66,7 +66,7 @@ func TestInit(t *testing.T) {
 	Init()
 	AddConstraint("a")
 	assertSat(t)
-	AddConstraint("^a")
+	AddConstraint("!a")
 	assertUnsat(t)
 	Init()
 	AddConstraint("a")
