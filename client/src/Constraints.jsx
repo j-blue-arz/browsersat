@@ -13,6 +13,7 @@ export class Constraints extends React.Component {
             constraints: [],
             model: {},
             satisfiable: true,
+            validationError: ""
         };
         this.handleAddConstraint = this.handleAddConstraint.bind(this);
         this.handleFlipLiteral = this.handleFlipLiteral.bind(this);
@@ -22,12 +23,13 @@ export class Constraints extends React.Component {
     handleAddConstraint(constraint) {
         if (window.satsolver) {
             constraint = constraint.replaceAll(" ", "");
-            const result = window.satsolver.addConstraint(constraint);
-            if (result === true) {
+            const validationResult = window.satsolver.validateConstraint(constraint);
+            if (validationResult === "VALID") {
                 const constraints = this.state.constraints.slice();
                 constraints.push(constraint);
-                this.setState({ constraints: constraints });
+                this.setState({ constraints: constraints, validationError: "" });
 
+                window.satsolver.addConstraint(constraint);
                 const satisfiable = window.satsolver.isSat();
                 this.setState({ satisfiable: satisfiable });
                 if (satisfiable) {
@@ -36,6 +38,7 @@ export class Constraints extends React.Component {
                 }
                 return true;
             } else {
+                this.setState({ validationError: validationResult });
                 return false;
             }
         }
@@ -70,14 +73,16 @@ export class Constraints extends React.Component {
                     model={this.state.model}
                     onFlipLiteral={this.handleFlipLiteral}
                 />
-                <SatStatus isSat={this.state.satisfiable} />
+                <SatStatus isSat={this.state.satisfiable} validationError={this.state.validationError} />
             </div>
         );
     }
 }
 
 function SatStatus(props) {
-    if (props.isSat) {
+    if (props.validationError !== "") {
+        return <div className="constraints__status constraints__status--error">{props.validationError}</div>;
+    } else if (props.isSat) {
         return <div className="constraints__status constraints__status--sat">SAT</div>;
     } else {
         return <div className="constraints__status constraints__status--unsat">UNSAT</div>;

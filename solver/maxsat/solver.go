@@ -16,6 +16,14 @@ func Init() {
 	isSat = false
 }
 
+func ValidateConstraint(constraint string) error {
+	_, err := parseExpression(constraint)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func AddConstraint(inputConstraint string) error {
 	newConstraints := append(inputConstraints, inputConstraint)
 	cnf, err := parseToCnf(newConstraints)

@@ -101,6 +101,13 @@ func TestFlipLiteralMinimizesModelChanges(t *testing.T) {
 	}
 }
 
+func TestValidateConstraint(t *testing.T) {
+	err := ValidateConstraint("a | (b | c")
+	if err == nil {
+		t.Errorf("expected error")
+	}
+}
+
 func diff(model1, model2 map[string]bool) int {
 	sum := 0
 	for lit := range model1 {
@@ -145,10 +152,6 @@ func assertUnsat(t *testing.T) {
 
 func assertTrue(literal string, t *testing.T) {
 	assertLiteralValue(literal, true, t)
-}
-
-func assertFalse(literal string, t *testing.T) {
-	assertLiteralValue(literal, false, t)
 }
 
 func assertLiteralValue(literal string, expected bool, t *testing.T) {

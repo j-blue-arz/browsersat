@@ -1,3 +1,5 @@
+//go:build wasm
+
 package main
 
 import (
@@ -11,14 +13,19 @@ func initializeSolver(this js.Value, args []js.Value) interface{} {
 }
 
 func addConstraint(this js.Value, args []js.Value) interface{} {
-	if len(args) != 1 {
-		return "Invalid no of arguments passed"
-	}
 	err := maxsat.AddConstraint(args[0].String())
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func validateConstraint(this js.Value, args []js.Value) interface{} {
+	err := maxsat.ValidateConstraint(args[0].String())
 	if err != nil {
 		return err.Error()
 	}
-	return true
+	return "VALID"
 }
 
 func isSat(this js.Value, args []js.Value) interface{} {
@@ -52,6 +59,7 @@ func convertModel(model map[string]bool) map[string]interface{} {
 func main() {
 	export := make(map[string]interface{})
 	export["initializeSolver"] = js.FuncOf(initializeSolver)
+	export["validateConstraint"] = js.FuncOf(validateConstraint)
 	export["addConstraint"] = js.FuncOf(addConstraint)
 	export["isSat"] = js.FuncOf(isSat)
 	export["getModel"] = js.FuncOf(getModel)
