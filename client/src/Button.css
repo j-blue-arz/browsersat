@@ -3,16 +3,23 @@
     border: 1px solid black;
     border-radius: 5px;
     color: #24292e;
-    cursor: pointer;
     display: inline-block;
     line-height: 1.1;
     padding: 0.3rem 1rem;
+    cursor: pointer;
 }
 
-.button-white:hover {
+.button-white:disabled {
+    cursor: default;
+    background-color: #edeff2;
+    border: 1px solid #63676b;
+    color: #63676b;
+}
+
+.button-white:hover:enabled {
     background-color: #f3f4f6;
 }
 
-.button-white:active {
+.button-white:active:enabled {
     background-color: #edeff2;
 }

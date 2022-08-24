@@ -13,11 +13,23 @@ export class Constraints extends React.Component {
             constraints: [],
             model: {},
             satisfiable: true,
-            validationError: ""
+            validationError: "",
+            hasLoadedWasm: false,
         };
         this.handleAddConstraint = this.handleAddConstraint.bind(this);
         this.handleFlipLiteral = this.handleFlipLiteral.bind(this);
         this.handleClearConstraints = this.handleClearConstraints.bind(this);
+    }
+
+    componentDidMount() {
+        WebAssembly.instantiateStreaming(
+            fetch(process.env.PUBLIC_URL + "/solver.wasm"),
+            window.go.importObject
+        ).then((obj) => {
+            window.go.run(obj.instance);
+            window.satsolver.initializeSolver();
+            this.setState({ hasLoadedWasm: true });
+        });
     }
 
     handleAddConstraint(constraint) {
@@ -65,23 +77,41 @@ export class Constraints extends React.Component {
         return (
             <div className="constraints">
                 <div className="constraints__interaction">
-                    <ConstraintInput onAddConstraint={this.handleAddConstraint} />
-                    <Button label="Clear" onClick={this.handleClearConstraints} />
+                    <ConstraintInput onAddConstraint={this.handleAddConstraint} disabled={!this.state.hasLoadedWasm}/>
+                    <Button
+                        label="Clear"
+                        onClick={this.handleClearConstraints}
+                        disabled={!this.state.hasLoadedWasm}
+                    />
                 </div>
                 <ConstraintsDisplay
                     constraints={this.state.constraints}
                     model={this.state.model}
                     onFlipLiteral={this.handleFlipLiteral}
                 />
-                <SatStatus isSat={this.state.satisfiable} validationError={this.state.validationError} />
+                <SatStatus
+                    isSat={this.state.satisfiable}
+                    validationError={this.state.validationError}
+                    hasLoadedWasm={this.state.hasLoadedWasm}
+                />
             </div>
         );
     }
 }
 
 function SatStatus(props) {
-    if (props.validationError !== "") {
-        return <div className="constraints__status constraints__status--error">{props.validationError}</div>;
+    if (!props.hasLoadedWasm) {
+        return (
+            <div className="constraints__status constraints__status--info">
+                Waiting for solver to be ready...
+            </div>
+        );
+    } else if (props.validationError !== "") {
+        return (
+            <div className="constraints__status constraints__status--error">
+                {props.validationError}
+            </div>
+        );
     } else if (props.isSat) {
         return <div className="constraints__status constraints__status--sat">SAT</div>;
     } else {

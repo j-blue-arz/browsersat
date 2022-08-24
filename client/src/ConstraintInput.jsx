@@ -51,7 +51,7 @@ export class ConstraintInput extends React.Component {
                         onKeyDown={this.handleKeyDown}
                     />
                 </label>
-                <Button label="Add" onClick={this.handleSubmit} />
+                <Button label="Add" onClick={this.handleSubmit} disabled={this.props.disabled}/>
             </div>
         );
     }
