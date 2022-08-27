@@ -29,6 +29,6 @@ COPY --from=solver-build /go_app/wasm_exec.js public/
 RUN npm ci
 RUN npm run build
 
-FROM nginx:latest as release
+FROM nginx:latest as run
 
 COPY --from=react-build /react_app/dist /usr/share/nginx/html
