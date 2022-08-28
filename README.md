@@ -16,11 +16,10 @@ Open `localhost` in your browser.
 - [x] reduce binary size with TinyGo
 - [x] Ship it
 - [x] Input validation
-- [ ] Support pseudo-boolean logic
+- [ ] Show evaluation of subformulas
 
 
 ### Other ideas
 * SVG display to increase readability
-* Show evaluation of subformulas
 * Create UI for a specific use-case, e.g. some planning, scheduling or data science problem - or just simply Sudoku.
 * ...
