@@ -104,7 +104,63 @@ func TestFlipLiteralMinimizesModelChanges(t *testing.T) {
 func TestValidateConstraint(t *testing.T) {
 	err := ValidateConstraint("a | (b | c")
 	if err == nil {
-		t.Errorf("expected error")
+		t.Errorf("expected error, but got none")
+	}
+}
+
+func TestEvaluateInvalidFormula(t *testing.T) {
+	Init()
+	AddConstraint("a & b & !c & !d")
+	_, err := Evaluate("a | (b")
+	if err == nil {
+		t.Errorf("expected error, but got none")
+	}
+}
+
+func TestEvaluateFormulaUnknownLiterals(t *testing.T) {
+	Init()
+	AddConstraint("a & b & !c & !d")
+	_, err := Evaluate("a | f")
+	if err == nil {
+		t.Errorf("expected error, but got none")
+	}
+}
+
+func TestEvaluateOr(t *testing.T) {
+	Init()
+	AddConstraint("a & b & !c & !d")
+	expectEvaluateTrue(t, "a | c")
+}
+
+func TestEvaluateAndSubformula(t *testing.T) {
+	Init()
+	AddConstraint("a & b & !c & !d")
+	expectEvaluateFalse(t, "a & (!a | c)")
+}
+
+func TestEvaluateConstantAndImplication(t *testing.T) {
+	Init()
+	AddConstraint("a & b & !c & !d")
+	expectEvaluateTrue(t, "false -> (!a | c)")
+}
+
+func expectEvaluateTrue(t *testing.T, constraint string) {
+	value, err := Evaluate(constraint)
+	if err != nil {
+		t.Fatalf("unexpected error: %s", err)
+	}
+	if !value {
+		t.Errorf("expected true, was false")
+	}
+}
+
+func expectEvaluateFalse(t *testing.T, constraint string) {
+	value, err := Evaluate(constraint)
+	if err != nil {
+		t.Fatalf("unexpected error: %s", err)
+	}
+	if value {
+		t.Errorf("expected false, was true")
 	}
 }
 
