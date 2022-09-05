@@ -1,3 +1,8 @@
+.constraint {
+    line-height: 0.9;
+    margin-bottom: 1rem;
+}
+
 .literal--false {
     color: #ff4b4b;
     font-weight: 200
