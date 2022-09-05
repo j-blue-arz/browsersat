@@ -41,11 +41,19 @@ func getModel(this js.Value, args []js.Value) interface{} {
 }
 
 func flipLiteral(this js.Value, args []js.Value) interface{} {
-	error := maxsat.FlipLiteral(args[0].String())
-	if error != nil {
+	err := maxsat.FlipLiteral(args[0].String())
+	if err != nil {
 		return false
 	}
 	return true
+}
+
+func evaluate(this js.Value, args []js.Value) interface{} {
+	value, err := maxsat.Evaluate(args[0].String())
+	if err != nil {
+		return "INVALID"
+	}
+	return value
 }
 
 func convertModel(model map[string]bool) map[string]interface{} {
@@ -64,6 +72,7 @@ func main() {
 	export["isSat"] = js.FuncOf(isSat)
 	export["getModel"] = js.FuncOf(getModel)
 	export["flipLiteral"] = js.FuncOf(flipLiteral)
+	export["evaluate"] = js.FuncOf(evaluate)
 	js.Global().Set("satsolver", export)
 
 	<-make(chan bool)

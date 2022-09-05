@@ -25,7 +25,7 @@ export class ConstraintsDisplay extends React.Component {
                 });
 
             return (
-                <div className="constraint" key={index}>
+                <div className="constraint" key={index} onMouseUp={this.props.onSelectConstraint}>
                     {display}
                 </div>
             );

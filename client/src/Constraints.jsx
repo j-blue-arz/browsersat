@@ -15,10 +15,12 @@ export class Constraints extends React.Component {
             satisfiable: true,
             validationError: "",
             hasLoadedWasm: false,
+            selectionEvaluation: undefined
         };
         this.handleAddConstraint = this.handleAddConstraint.bind(this);
         this.handleFlipLiteral = this.handleFlipLiteral.bind(this);
         this.handleClearConstraints = this.handleClearConstraints.bind(this);
+        this.handleSelection = this.handleSelection.bind(this);
     }
 
     componentDidMount() {
@@ -73,11 +75,34 @@ export class Constraints extends React.Component {
         }
     }
 
+    handleSelection() {
+        if (window.satsolver) {
+            let selection = "";
+
+            if (window.getSelection) {
+                selection = window.getSelection() + "";
+            }
+
+            if (selection !== "") {
+                const evaluation = window.satsolver.evaluate(selection);
+                if (evaluation !== "INVALID") {
+                    this.setState({ selectionEvaluation: evaluation });
+                } else {
+                    this.setState({ selectionEvaluation: undefined });
+                }
+            }
+            
+        }
+    }
+
     render() {
         return (
             <div className="constraints">
                 <div className="constraints__interaction">
-                    <ConstraintInput onAddConstraint={this.handleAddConstraint} disabled={!this.state.hasLoadedWasm}/>
+                    <ConstraintInput
+                        onAddConstraint={this.handleAddConstraint}
+                        disabled={!this.state.hasLoadedWasm}
+                    />
                     <Button
                         label="Clear"
                         onClick={this.handleClearConstraints}
@@ -88,11 +113,13 @@ export class Constraints extends React.Component {
                     constraints={this.state.constraints}
                     model={this.state.model}
                     onFlipLiteral={this.handleFlipLiteral}
+                    onSelectConstraint={this.handleSelection}
                 />
                 <SatStatus
                     isSat={this.state.satisfiable}
                     validationError={this.state.validationError}
                     hasLoadedWasm={this.state.hasLoadedWasm}
+                    selectionEvaluation={this.state.selectionEvaluation}
                 />
             </div>
         );
@@ -112,9 +139,12 @@ function SatStatus(props) {
                 {props.validationError}
             </div>
         );
+    } else if (props.selectionEvaluation !== undefined) {
+        const value = props.selectionEvaluation ? <span class="literal--true">TRUE</span> : <span class="literal--false">FALSE</span> 
+        return <div className="constraints__status constraints__status--info">Selection evaluates to {value}</div>;
     } else if (props.isSat) {
-        return <div className="constraints__status constraints__status--sat">SAT</div>;
+        return <div className="constraints__status literal--true">SAT</div>;
     } else {
-        return <div className="constraints__status constraints__status--unsat">UNSAT</div>;
+        return <div className="constraints__status literal--false">UNSAT</div>;
     }
 }
