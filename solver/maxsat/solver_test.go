@@ -86,18 +86,25 @@ func TestFlipLiteral(t *testing.T) {
 
 func TestFlipLiteralMinimizesModelChanges(t *testing.T) {
 	Init()
-	AddConstraint("a | b | c")
+	AddConstraint("a | (b & c & d) | e")
 	model, _ := GetModel()
-	literalToFlip := "a"
-	if !allTrue(model) {
-		literalToFlip, _ = getAnyFalse(model)
+	if model["b"] {
+		FlipLiteral("b")
+		FlipLiteral("c")
+		FlipLiteral("d")
 	}
-	FlipLiteral(literalToFlip)
-	newModel, _ := GetModel()
-
-	d := diff(model, newModel)
-	if d > 1 {
-		t.Errorf("when flipping %s, models %s and %s should only differ in one literal, but was %d", literalToFlip, toStr(model), toStr(newModel), d)
+	assertFalse("b", t)
+	assertFalse("c", t)
+	assertFalse("d", t)
+	for i := 1; i <= 20; i++ {
+		model, _ := GetModel()
+		if model["a"] {
+			FlipLiteral("a")
+		} else if model["e"] {
+			FlipLiteral("e")
+		} else {
+			t.Fatalf("b, c, and d are expected to remain false, but they became true in iteration %d.", i)
+		}
 	}
 }
 
@@ -208,6 +215,10 @@ func assertUnsat(t *testing.T) {
 
 func assertTrue(literal string, t *testing.T) {
 	assertLiteralValue(literal, true, t)
+}
+
+func assertFalse(literal string, t *testing.T) {
+	assertLiteralValue(literal, false, t)
 }
 
 func assertLiteralValue(literal string, expected bool, t *testing.T) {

@@ -117,11 +117,11 @@ func solveMaxsat(cnf *cnf) []bool {
 		problem.SetCostFunc(relaxLits, weights)
 	}
 	s := solver.New(problem)
-	if s.Solve() != solver.Sat {
+	res := s.Optimal(nil, nil)
+	if res.Status != solver.Sat {
 		return nil
 	}
-	m := s.Model()
-	return m
+	return res.Model
 }
 
 // retrieveLiterals
