@@ -68,7 +68,7 @@ var expressionLexer = lexer.MustSimple([]lexer.SimpleRule{
 	{Name: "EquivalenceOperator", Pattern: `=`},
 	{Name: "AndOperator", Pattern: `&|\+`},
 	{Name: "OrOperator", Pattern: `\||\/`},
-	{Name: "NotOperator", Pattern: `!`},
+	{Name: "NotOperator", Pattern: `!|\-`},
 	{Name: "Parentheses", Pattern: `\(|\)`},
 	{Name: "Value", Pattern: `true|false`},
 	{Name: "LiteralName", Pattern: `\w+`},
