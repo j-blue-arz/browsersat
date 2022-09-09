@@ -66,12 +66,12 @@ type Literal struct {
 var expressionLexer = lexer.MustSimple([]lexer.SimpleRule{
 	{Name: "ImplicationOperator", Pattern: `->`},
 	{Name: "EquivalenceOperator", Pattern: `=`},
-	{Name: "AndOperator", Pattern: `&`},
-	{Name: "OrOperator", Pattern: `\|`},
+	{Name: "AndOperator", Pattern: `&|\+`},
+	{Name: "OrOperator", Pattern: `\||\/`},
 	{Name: "NotOperator", Pattern: `!`},
 	{Name: "Parentheses", Pattern: `\(|\)`},
 	{Name: "Value", Pattern: `true|false`},
-	{Name: "LiteralName", Pattern: `[a-zA-Z_]\w*`},
+	{Name: "LiteralName", Pattern: `\w+`},
 	{Name: "Whitespace", Pattern: `[ \t]+`},
 })
 
