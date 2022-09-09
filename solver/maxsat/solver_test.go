@@ -109,9 +109,19 @@ func TestFlipLiteralMinimizesModelChanges(t *testing.T) {
 }
 
 func TestValidateConstraint(t *testing.T) {
-	err := ValidateConstraint("a | (b | c")
+	_, err := ValidateConstraint("a | (b | c")
 	if err == nil {
 		t.Errorf("expected error, but got none")
+	}
+}
+
+func TestValidateConstraintReturnsCanonicalForm(t *testing.T) {
+	str, err := ValidateConstraint("a + -b")
+	if err != nil {
+		t.Fatalf("unexpected error")
+	}
+	if str != "and(a, not(b))" {
+		t.Errorf("expected %s, got %s", "and(a, not(b))", str)
 	}
 }
 

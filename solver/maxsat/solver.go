@@ -16,12 +16,12 @@ func Init() {
 	isSat = false
 }
 
-func ValidateConstraint(constraint string) error {
-	_, err := parseExpression(constraint)
+func ValidateConstraint(constraint string) (string, error) {
+	expr, err := parseExpression(constraint)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return expr.string()
 }
 
 func AddConstraint(inputConstraint string) error {

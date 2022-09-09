@@ -21,7 +21,7 @@ func addConstraint(this js.Value, args []js.Value) interface{} {
 }
 
 func validateConstraint(this js.Value, args []js.Value) interface{} {
-	err := maxsat.ValidateConstraint(args[0].String())
+	_, err := maxsat.ValidateConstraint(args[0].String())
 	if err != nil {
 		return err.Error()
 	}
