@@ -13,10 +13,11 @@ Open `localhost` in your browser.
 - [x] Docker build
 - [x] Display SAT assignment
 - [x] User can flip literals
-- [x] reduce binary size with TinyGo
+- [ ] TinyGo. Did not work due to incompatibilities.
 - [x] Ship it
 - [x] Input validation
-- [ ] Show evaluation of subformulas
+- [x] Show evaluation of subformulas
+- [ ] Support Partial boolean constraints
 
 
 ### Other ideas
