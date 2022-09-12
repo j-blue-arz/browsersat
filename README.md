@@ -13,14 +13,15 @@ Open `localhost` in your browser.
 - [x] Docker build
 - [x] Display SAT assignment
 - [x] User can flip literals
-- [ ] TinyGo. Did not work due to incompatibilities.
 - [x] Ship it
 - [x] Input validation
 - [x] Show evaluation of subformulas
+- [ ] Simplify manual assignment
+- [ ] Allow removal of constraints
 - [ ] Support Partial boolean constraints
 
 
 ### Other ideas
-* SVG display to increase readability
+* increase readability, e.g. SVG display, or a mixed prefix/infix display
 * Create UI for a specific use-case, e.g. some planning, scheduling or data science problem - or just simply Sudoku.
 * ...
