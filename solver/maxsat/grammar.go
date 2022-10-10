@@ -18,6 +18,12 @@ import "github.com/alecthomas/participle/v2/lexer"
 
 type Expression struct {
 	Implication *Implication `parser:"@@"`
+	Unique      *Unique      `parser:"|'{' @@ '}'"`
+}
+
+type Unique struct {
+	First *Literal `parser:"@@"`
+	Next  *Unique  `parser:"(','  @@)?"`
 }
 
 type Implication struct {
@@ -70,6 +76,8 @@ var expressionLexer = lexer.MustSimple([]lexer.SimpleRule{
 	{Name: "OrOperator", Pattern: `\||\/`},
 	{Name: "NotOperator", Pattern: `!|\-`},
 	{Name: "Parentheses", Pattern: `\(|\)`},
+	{Name: "UniqueBrace", Pattern: `\{|\}`},
+	{Name: "UniqueDelim", Pattern: `,`},
 	{Name: "Value", Pattern: `true|false`},
 	{Name: "LiteralName", Pattern: `\w+`},
 	{Name: "Whitespace", Pattern: `[ \t]+`},

@@ -16,7 +16,7 @@ Open `localhost` in your browser.
 - [x] Ship it
 - [x] Input validation
 - [x] Show evaluation of subformulas
-- [ ] Simplify manual assignment
+- [ ] Support exactly-one constraints 
 - [ ] Allow removal of constraints
 - [ ] Support Partial boolean constraints
 

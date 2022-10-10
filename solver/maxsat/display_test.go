@@ -32,12 +32,15 @@ var displayTestCases = map[string][]struct {
 	{"a=b", "eq(a, b)"},
 	{"a&b=c|d", "eq(and(a, b), or(c, d))"},
 	{"a&b->c|d", "implies(and(a, b), or(c, d))"},
+}, "unique": {
+	{"{a, b, c}", "unique(a, b, c)"},
 }, "errors": {
 	{"a=b=c", ""},
 	{"a->b->c", ""},
 	{"a(|b)|c", ""},
 	{"a|(b|c", ""},
 	{"a|()|c", ""},
+	{"x -> {a, b, c}", ""},
 }}
 
 func TestParseAndOr(t *testing.T) {
@@ -54,6 +57,10 @@ func TestParseSubexpressions(t *testing.T) {
 
 func TestParseImplications(t *testing.T) {
 	runDisplayTests(t, "implies-equiv")
+}
+
+func TestParseMaxOnes(t *testing.T) {
+	runDisplayTests(t, "unique")
 }
 
 func TestParseErrors(t *testing.T) {

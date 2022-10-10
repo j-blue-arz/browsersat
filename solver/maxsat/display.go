@@ -6,7 +6,32 @@ import (
 )
 
 func (e Expression) string() (string, error) {
-	return e.Implication.string()
+	if e.Implication != nil {
+		return e.Implication.string()
+	} else if e.Unique != nil {
+		return e.Unique.string()
+	} else {
+		return "", fmt.Errorf("expected either a boolean formula or a max one constraint")
+	}
+
+}
+
+func (u Unique) string() (string, error) {
+	literals := make([]string, 0)
+	for cur := &u; cur != nil; cur = cur.Next {
+		literal, err := cur.First.string()
+		if err != nil {
+			return "", err
+		}
+		literals = append(literals, literal)
+	}
+	if len(literals) > 1 {
+		return "unique(" + strings.Join(literals, ", ") + ")", nil
+	} else if len(literals) == 1 {
+		return literals[0], nil
+	} else {
+		return "", fmt.Errorf("expected at least one operand, got 0")
+	}
 }
 
 func (i Implication) string() (string, error) {
