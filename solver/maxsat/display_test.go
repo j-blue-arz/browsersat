@@ -41,6 +41,7 @@ var displayTestCases = map[string][]struct {
 	{"a|(b|c", ""},
 	{"a|()|c", ""},
 	{"x -> {a, b, c}", ""},
+	{"{a, b, !c}", ""},
 }}
 
 func TestParseAndOr(t *testing.T) {

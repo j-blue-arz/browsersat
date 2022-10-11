@@ -57,7 +57,26 @@ func toString(f nnf) string {
 }
 
 func (e Expression) toNNF(negated bool) nnf {
-	return e.Implication.toNNF(negated)
+	if e.Implication != nil {
+		return e.Implication.toNNF(negated)
+	} else { // e.Unique != nil
+		return e.Unique.toNNF()
+	}
+}
+
+func (u Unique) toNNF() nnf {
+	literals := make([]Literal, 0)
+	for cur := &u; cur != nil; cur = cur.Next {
+		literal := *cur.First
+		literals = append(literals, literal)
+	}
+	if len(literals) > 1 {
+		return unique(literals...)
+	} else if len(literals) == 1 {
+		return literals[0].toNNF(false)
+	} else {
+		return False
+	}
 }
 
 func (i Implication) toNNF(negated bool) nnf {
@@ -131,6 +150,23 @@ func (c Constant) toNNF(negated bool) nnf {
 
 func (l Literal) toNNF(negated bool) nnf {
 	return lit{name: l.Name, negated: negated}
+}
+
+func unique(literals ...Literal) nnf {
+	n := len(literals)
+	res := make([]nnf, 1, 1+(n*(n-1))/2)
+	operands := make([]nnf, len(literals))
+	for i, literal := range literals {
+		operand := literal.toNNF(false)
+		operands[i] = operand
+	}
+	res[0] = makeOr(operands...)
+	for i := 0; i < len(literals)-1; i++ {
+		for j := i + 1; j < len(literals); j++ {
+			res = append(res, makeOr(literals[i].toNNF(true), literals[j].toNNF(true)))
+		}
+	}
+	return makeAnd(res...)
 }
 
 func makeOr(operands ...nnf) nnf {

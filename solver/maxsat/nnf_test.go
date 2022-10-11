@@ -28,6 +28,11 @@ var nnfTestCases = []struct {
 	{"((a & b & c) & d & e)", and{literal("a"), literal("b"), literal("c"), literal("d"), literal("e")}},
 	{"(!a & b) -> !(c & d)", or{literal("a"), literalNeg("b"), literalNeg("c"), literalNeg("d")}},
 	{"a = b", and{or{literalNeg("a"), literal("b")}, or{literal("a"), literalNeg("b")}}},
+	{"{a, b, c}", and{
+		or{literal("a"), literal("b"), literal("c")},
+		or{literalNeg("a"), literalNeg("b")},
+		or{literalNeg("a"), literalNeg("c")},
+		or{literalNeg("b"), literalNeg("c")}}},
 }
 
 func TestAllNnfCases(t *testing.T) {

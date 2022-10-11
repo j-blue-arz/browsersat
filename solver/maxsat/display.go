@@ -13,7 +13,6 @@ func (e Expression) string() (string, error) {
 	} else {
 		return "", fmt.Errorf("expected either a boolean formula or a max one constraint")
 	}
-
 }
 
 func (u Unique) string() (string, error) {
