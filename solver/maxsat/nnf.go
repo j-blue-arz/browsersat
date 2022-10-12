@@ -65,13 +65,9 @@ func (e Expression) toNNF(negated bool) nnf {
 }
 
 func (u Unique) toNNF() nnf {
-	literals := make([]Literal, 0)
-	for cur := &u; cur != nil; cur = cur.Next {
-		literal := *cur.First
-		literals = append(literals, literal)
-	}
+	literals := u.retrieveLiterals()
 	if len(literals) > 1 {
-		return unique(literals...)
+		return makeUnique(literals...)
 	} else if len(literals) == 1 {
 		return literals[0].toNNF(false)
 	} else {
@@ -152,7 +148,7 @@ func (l Literal) toNNF(negated bool) nnf {
 	return lit{name: l.Name, negated: negated}
 }
 
-func unique(literals ...Literal) nnf {
+func makeUnique(literals ...Literal) nnf {
 	n := len(literals)
 	res := make([]nnf, 1, 1+(n*(n-1))/2)
 	operands := make([]nnf, len(literals))

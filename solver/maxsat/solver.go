@@ -124,64 +124,27 @@ func solveMaxsat(cnf *cnf) []bool {
 	return res.Model
 }
 
-// retrieveLiterals
-
-func (e Expression) retrieveLiterals() []Literal {
-	return e.Implication.retrieveLiterals()
-}
-
-func (i Implication) retrieveLiterals() []Literal {
-	left := i.Left.retrieveLiterals()
-	var right []Literal
-	if i.Implication != nil {
-		right = i.Implication.retrieveLiterals()
-
-	} else if i.Equivalence != nil {
-		right = i.Equivalence.retrieveLiterals()
-	}
-	return append(left, right...)
-}
-
-func (d Disjunction) retrieveLiterals() []Literal {
-	operands := make([]Literal, 0)
-	for cur := &d; cur != nil; cur = cur.Next {
-		operand := cur.Conjunction.retrieveLiterals()
-		operands = append(operands, operand...)
-	}
-	return operands
-}
-
-func (c Conjunction) retrieveLiterals() []Literal {
-	operands := make([]Literal, 0)
-	for cur := &c; cur != nil; cur = cur.Next {
-		operand := cur.Unary.retrieveLiterals()
-		operands = append(operands, operand...)
-	}
-	return operands
-}
-
-func (u Unary) retrieveLiterals() []Literal {
-	if u.Not != "" {
-		return u.Unary.retrieveLiterals()
-	} else {
-		return u.Factor.retrieveLiterals()
-	}
-}
-
-func (f Factor) retrieveLiterals() []Literal {
-	if f.Constant != nil {
-		return []Literal{}
-	} else if f.Literal != nil {
-		return []Literal{*f.Literal}
-	} else { // f.SubExpression != nil
-		return f.SubExpression.retrieveLiterals()
-	}
-}
-
 // evaluate
 
 func (e Expression) evaluate(model map[string]bool) (bool, error) {
-	return e.Implication.evaluate(model)
+	if e.Implication != nil {
+		return e.Implication.evaluate(model)
+	} else { // e.Unique != nil
+		return e.Unique.evaluate(model)
+	}
+}
+
+func (u Unique) evaluate(model map[string]bool) (bool, error) {
+	literals := u.retrieveLiterals()
+	count := 0
+	for _, literal := range literals {
+		if val, ok := model[literal.Name]; !ok {
+			return false, fmt.Errorf("expression contains unknown literals")
+		} else if val {
+			count++
+		}
+	}
+	return count == 1, nil
 }
 
 func (i Implication) evaluate(model map[string]bool) (bool, error) {

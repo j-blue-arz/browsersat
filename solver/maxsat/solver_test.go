@@ -46,6 +46,18 @@ func TestAddConstraintMultipleTimes(t *testing.T) {
 	assertUnsat(t)
 }
 
+func TestAddConstraintWithUnique(t *testing.T) {
+	Init()
+	AddConstraint("{a, b, c}")
+	assertSat(t)
+	AddConstraint("{c, d}")
+	assertSat(t)
+	AddConstraint("d")
+	assertSat(t)
+	AddConstraint("!a & !b")
+	assertUnsat(t)
+}
+
 func TestAddConstraintParserError(t *testing.T) {
 	cases := []string{"!", "!!", "a||b", "&7&b"}
 	for _, input := range cases {
@@ -115,6 +127,20 @@ func TestValidateConstraint(t *testing.T) {
 	}
 }
 
+func TestValidateConstraintEmptyUnique(t *testing.T) {
+	_, err := ValidateConstraint("{}")
+	if err == nil {
+		t.Errorf("expected error, but got none")
+	}
+}
+
+func TestValidateConstraintNegatedLiteralInUnique(t *testing.T) {
+	_, err := ValidateConstraint("{!a, !b}")
+	if err == nil {
+		t.Errorf("expected error, but got none")
+	}
+}
+
 func TestValidateConstraintReturnsCanonicalForm(t *testing.T) {
 	str, err := ValidateConstraint("a + -b")
 	if err != nil {
@@ -159,6 +185,15 @@ func TestEvaluateConstantAndImplication(t *testing.T) {
 	Init()
 	AddConstraint("a & b & !c & !d")
 	expectEvaluateTrue(t, "false -> (!a | c)")
+}
+
+func TestEvaluateUniqueConstraint(t *testing.T) {
+	Init()
+	AddConstraint("a & b & !c & !d")
+	expectEvaluateTrue(t, "{a}")
+	expectEvaluateTrue(t, "{b, c, d}")
+	expectEvaluateFalse(t, "{a, b}")
+	expectEvaluateFalse(t, "{c, d}")
 }
 
 func expectEvaluateTrue(t *testing.T, constraint string) {
